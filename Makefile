@@ -8,6 +8,10 @@ lint: mypy black
 test:
 	$(PYTHON) -m pytest
 
+.PHONY: cover
+cover:
+	$(POETRY) run coverage run -m pytest
+
 .PHONY: mypy
 mypy:
 	$(POETRY) run mypy .
