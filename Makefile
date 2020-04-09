@@ -2,7 +2,7 @@ POETRY ?= poetry
 PYTHON ?= $(POETRY) run python
 
 .PHONY: lint
-lint: mypy black
+lint: black flake8 mypy
 
 .PHONY: test
 test:
@@ -19,3 +19,7 @@ mypy:
 .PHONY: black
 black:
 	$(POETRY) run black .
+
+.PHONY: flake8
+flake8:
+	$(POETRY) run flake8 .
