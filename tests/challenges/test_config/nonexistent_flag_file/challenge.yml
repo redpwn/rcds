@@ -1,0 +1,9 @@
+name: Test challenge
+author: author
+value: 500
+
+flag:
+  file: ./nonexistent
+
+description: |
+  Here's the flag!

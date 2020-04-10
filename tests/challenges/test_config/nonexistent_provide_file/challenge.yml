@@ -1,0 +1,13 @@
+name: Test challenge
+author: author
+value: 500
+
+flag: flag{test_flag_here}
+
+description: |
+  Here's the flag!
+
+  `flag{test_flag_here}`
+
+provide:
+- ./nonexistent

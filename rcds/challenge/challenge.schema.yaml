@@ -1,0 +1,181 @@
+$schema: http://json-schema.org/draft-07/schema#
+$id: http://rcds.redpwn.com/schemas/challenge.yaml
+type: object
+properties:
+  # Basic challenge details
+  name:
+    type: string
+    description: >
+      The name of the challenge
+  author:
+    description: >
+      The author(s) of the challenge
+    oneOf:
+    - type: string
+    - type: array
+      items:
+        type: string
+  description:
+    type: string
+    description: >
+      Description of the challenge. It is in Markdown format and will be
+      processed with Jinja.
+  flag:
+    description: >
+      The flag for the challenge.
+    oneOf:
+    - type: string
+    - type: object
+      properties:
+        file:
+          type: string
+          description: >
+            File to load the flag from. The file should contain one line with
+            only the flag.
+        regex:
+          type: regex
+      # Exactly one of (file, regex) allowed
+      not:
+        anyOf:
+        - required:
+          - file
+          - regex
+      anyOf:
+        - required: [file]
+        - required: [regex]
+  value:
+    type: integer
+    description: >
+      The point value of the challenge, or full point value for a
+      dynamically-scored challenge; the precise meaning is defined by the
+      scoreboard backend being used.
+    minimum: 0
+
+  # Static assets
+  provide:
+    type: array
+    description: >
+      Static files (that are in the repository already on disk) to provide to competitors
+    items:
+      oneOf:
+      - type: string
+        description: >
+          Path to the file to provide
+      - type: object
+        properties:
+          file:
+            type: string
+            description: >
+              Path to the file to provide
+          as:
+            type: string
+            description: >
+              Name of file as shown to competitors
+        required:
+        - file
+        - as
+
+  # Runtime (containers)
+  containers:
+    type: object
+    description: >
+      Containers to be deployed for this challenge. The key of each container
+      is its name, where the container can be found via DNS lookup at runtime
+      from other containers within this challenge.
+    additionalProperties:
+      type: object
+      properties:
+        image:
+          type: string
+          description: >
+            The image tag for this container. If 'build' is not specified, the
+            container will be pulled (e.g. containers for services like a
+            database found on dockerhub). If 'build' is specified, this
+            overrides the 'name' (default the name of the directory specified in
+            'build') in the image tag template defined globally in the project.
+        build:
+          oneOf:
+          - type: string
+            description: >
+              Path to the directory containing a Dockerfile to build for this container.
+          - type: object
+            description: >
+              Complex build configuration object roughly mirroring that of
+              docker-compose.yml.
+            properties:
+              context:
+                type: string
+                description: >
+                  Path to the build context
+              dockerfile:
+                type: string
+                description: >
+                  Path to the Dockerfile within the build context
+              args:
+                type: object
+                description: >
+                  Build arguments to be passed to the build. Please write
+                  numbers as strings to avoid ambiguity from number formatting
+                additionalProperties:
+                  type: string
+        environment:
+          type: object
+          description: >
+            Environment variables to set within the container. Please format all
+            values as strings. Keys without values are not supported.
+          additionalProperties:
+            type: string
+        ports:
+          type: array
+          description: >
+            Port numbers (as integers) on this container to expose to other
+            containers within this challenge. If a port is supposed to be
+            exposed to the Internet, make sure it is specified here, and add it
+            to the top level 'expose' key.
+
+            This key exists to ensure Kubernetes services have the correct
+            ports configured on each service. Due to restrictions with Docker
+            Compose / Docker Swarm, remapping ports as can be done with
+            Kubernetes services is not possible.
+          items:
+            type: integer
+      anyOf:
+      # Either 'image' or 'build' must be specified
+      - required:
+        - image
+      - required:
+        - build
+  expose:
+    type: object
+    description: >
+      Ports on containers to expose to the Internet. Keys correspond to the key
+      of the container that the rule is targeting.
+    additionalProperties:
+      type: array
+      items:
+        type: object
+        properties:
+          target:
+            type: integer
+            description: >
+              The port number on the container this rule targets.
+          tcp:
+            type: integer
+            description: >
+              The external port number to expose, treating this port as raw TCP.
+          http:
+            type: string
+            description: >
+              The hostname to expose, treating this port as HTTP.
+        # Exactly one of (http, tcp) allowed
+        not:
+          anyOf:
+          - required:
+            - http
+            - tcp
+        anyOf:
+          - required: [http]
+          - required: [tcp]
+required:
+- name
+- description
