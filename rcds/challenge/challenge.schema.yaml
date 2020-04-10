@@ -118,6 +118,8 @@ properties:
                   numbers as strings to avoid ambiguity from number formatting
                 additionalProperties:
                   type: string
+            required:
+            - context
         environment:
           type: object
           description: >
