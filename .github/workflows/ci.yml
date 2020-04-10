@@ -49,5 +49,7 @@ jobs:
           make cover
 
       - name: Upload coverage reports
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
-          codecov
+          codecov --token="$CODECOV_TOKEN"
