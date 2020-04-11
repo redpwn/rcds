@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: CI
 on: [push, pull_request]
 
 jobs:
@@ -18,10 +18,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install --upgrade pre-commit
+          python -m pip install --upgrade poetry
+          poetry --version
+          poetry install --no-interaction
 
       - name: Lint
-        run: pre-commit run --all-files
+        run: poetry run pre-commit run --all-files
 
   test:
     runs-on: ubuntu-latest

@@ -67,7 +67,8 @@ class ConfigLoader:
                             if key not in config["containers"]:
                                 # FIXME: Use better error types
                                 yield ValueError(
-                                    f'`expose` references container "{key}" but it is not defined in `containers`'
+                                    f'`expose` references container "{key}" but '
+                                    f"it is not defined in `containers`"
                                 )
                             else:
                                 for expose_obj in expose_objs:
@@ -77,7 +78,9 @@ class ConfigLoader:
                                     ):
                                         # FIXME: Use better error types
                                         yield ValueError(
-                                            f'`expose` references port {expose_obj["target"]} on container "{key}" which is not defined'
+                                            f"`expose` references port "
+                                            f'{expose_obj["target"]} on container '
+                                            f'"{key}" which is not defined'
                                         )
                 if "provide" in config:
                     for f in config["provide"]:
@@ -85,7 +88,8 @@ class ConfigLoader:
                         if not (root / f).is_file():
                             # FIXME: Use better error types
                             yield FileNotFoundError(
-                                f'`provide` references file "{str(f)}" which does not exist'
+                                f'`provide` references file "{str(f)}" which does not '
+                                f"exist"
                             )
                 if "flag" in config and isinstance(config["flag"], dict):
                     if "file" in config["flag"]:
@@ -93,7 +97,8 @@ class ConfigLoader:
                         if not (root / f).is_file():
                             # FIXME: Use better error types
                             yield FileNotFoundError(
-                                f'`flag.file` references file "{str(f)}" which does not exist'
+                                f'`flag.file` references file "{str(f)}" which does not'
+                                f"exist"
                             )
 
         errors = check()
