@@ -1,4 +1,5 @@
 from rcds.challenge import config
+from rcds import Project
 import pytest  # type: ignore
 
 
@@ -9,13 +10,19 @@ def test_datadir(request, datadir):
     return datadir / fn_name[5:]
 
 
-def test_valid(test_datadir) -> None:
-    cfg, errors = config.check_config(test_datadir / "challenge.yml")
+@pytest.fixture
+def configloader(datadir):
+    project = Project(datadir)
+    return config.ConfigLoader(project)
+
+
+def test_valid(configloader, test_datadir) -> None:
+    cfg, errors = configloader.check_config(test_datadir / "challenge.yml")
     assert errors is None
 
 
-def test_expose_no_containers(test_datadir) -> None:
-    cfg, errors = config.check_config(test_datadir / "challenge.yml")
+def test_expose_no_containers(configloader, test_datadir) -> None:
+    cfg, errors = configloader.check_config(test_datadir / "challenge.yml")
     assert errors is not None
     errors = list(errors)
     error_messages = [str(e) for e in errors]
@@ -23,8 +30,8 @@ def test_expose_no_containers(test_datadir) -> None:
     assert "Cannot expose ports without containers defined" in error_messages
 
 
-def test_nonexistent_target_container(test_datadir) -> None:
-    cfg, errors = config.check_config(test_datadir / "challenge.yml")
+def test_nonexistent_target_container(configloader, test_datadir) -> None:
+    cfg, errors = configloader.check_config(test_datadir / "challenge.yml")
     assert errors is not None
     errors = list(errors)
     error_messages = [str(e) for e in errors]
@@ -35,8 +42,8 @@ def test_nonexistent_target_container(test_datadir) -> None:
     )
 
 
-def test_nonexistent_target_port(test_datadir):
-    cfg, errors = config.check_config(test_datadir / "challenge.yml")
+def test_nonexistent_target_port(configloader, test_datadir) -> None:
+    cfg, errors = configloader.check_config(test_datadir / "challenge.yml")
     errors = list(errors)
     error_messages = [str(e) for e in errors]
     assert len(errors) != 0
@@ -46,8 +53,8 @@ def test_nonexistent_target_port(test_datadir):
     )
 
 
-def test_nonexistent_provide_file(test_datadir):
-    cfg, errors = config.check_config(test_datadir / "challenge.yml")
+def test_nonexistent_provide_file(configloader, test_datadir) -> None:
+    cfg, errors = configloader.check_config(test_datadir / "challenge.yml")
     errors = list(errors)
     error_messages = [str(e) for e in errors]
     assert len(errors) != 0
@@ -56,8 +63,8 @@ def test_nonexistent_provide_file(test_datadir):
     )
 
 
-def test_nonexistent_flag_file(test_datadir):
-    cfg, errors = config.check_config(test_datadir / "challenge.yml")
+def test_nonexistent_flag_file(configloader, test_datadir) -> None:
+    cfg, errors = configloader.check_config(test_datadir / "challenge.yml")
     errors = list(errors)
     error_messages = [str(e) for e in errors]
     assert len(errors) != 0
