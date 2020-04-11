@@ -1,0 +1,12 @@
+name: Challenge
+description: Description
+
+containers:
+  main:
+    build: .
+    ports:
+    - 9999
+  postgres:
+    image: postgres
+    ports:
+    - 5432

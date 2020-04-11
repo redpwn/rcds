@@ -1,0 +1,3 @@
+docker:
+  image-prefix: ""
+  registry: registry/ns
