@@ -97,8 +97,8 @@ class ConfigLoader:
                         if not (root / f).is_file():
                             # FIXME: Use better error types
                             yield FileNotFoundError(
-                                f'`flag.file` references file "{str(f)}" which does not'
-                                f"exist"
+                                f'`flag.file` references file "{str(f)}" which does '
+                                f"not exist"
                             )
 
         errors = check()
