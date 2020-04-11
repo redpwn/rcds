@@ -31,7 +31,7 @@ class TestGenerateSum:
         # TODO: better way of testing than blackbox hash compare
         assert (
             docker.generate_sum(df_root)
-            == "4282334437ae87b7d35ab81d24e2bb4a216fdac8b0c54620dc1f00c3621edea3"
+            == "683c5631d14165f0326ef55dfaf5463cc0aa550743398a4d8e31d37c4f5d6981"
         )
 
 
