@@ -72,3 +72,13 @@ def test_nonexistent_flag_file(configloader, test_datadir) -> None:
         '`flag.file` references file "nonexistent" which does not exist'
         in error_messages
     )
+
+
+def test_load_valid(configloader: config.ConfigLoader, datadir) -> None:
+    cfg = configloader.load_config(datadir / "valid/challenge.yml")
+    assert cfg is not None
+
+
+def test_load_invalid(configloader: config.ConfigLoader, datadir) -> None:
+    with pytest.raises(Exception):
+        configloader.load_config(datadir / "nonexistent_flag_file/challenge.yml")
