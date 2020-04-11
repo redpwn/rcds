@@ -60,6 +60,14 @@ class Container:
         self.name = name
         self.config = container_manager.config[self.name]
 
+    def get_full_tag(self) -> str:
+        """
+        Get the full image tag (e.g. ``k8s.gcr.io/etcd:3.4.3-0``) for this container
+
+        :returns: The image tag
+        """
+        return self.config["image"]
+
     def is_built(self) -> bool:
         """
         If the container is buildable (:const:`IS_BUILDABLE` is `True`), this method
@@ -119,6 +127,9 @@ class BuildableContainer(Container):
             rm=True,
         )
 
+    def get_full_tag(self) -> str:
+        return f"{self.image}:{self.content_hash}"
+
     def is_built(self) -> bool:
         """
         Checks if a container built with a build context with a matching hash exists,
@@ -127,12 +138,12 @@ class BuildableContainer(Container):
         :returns: Whether or not the image was found
         """
         try:
-            self.project.docker_client.images.get(f"{self.image}:{self.content_hash}")
+            self.project.docker_client.images.get(self.get_full_tag())
             return True
         except docker.errors.ImageNotFound:
             pass  # continue with trying to pull
         try:
-            self.project.docker_client.images.pull(self.image, tag=self.content_hash)
+            self.project.docker_client.images.pull(self.get_full_tag())
             return True
         except docker.errors.NotFound:
             pass  # continue

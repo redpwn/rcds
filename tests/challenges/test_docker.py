@@ -1,6 +1,8 @@
 from rcds.challenge import docker
 from rcds import Project, ChallengeLoader
 
+from typing import cast
+
 
 class TestGetContextFiles:
     def test_basic(self, datadir) -> None:
@@ -25,7 +27,7 @@ class TestGetContextFiles:
 
 
 class TestGenerateSum:
-    def test_basic(self, datadir):
+    def test_basic(self, datadir) -> None:
         df_root = datadir / "contexts" / "basic"
         assert df_root.is_dir()
         # TODO: better way of testing than blackbox hash compare
@@ -36,15 +38,35 @@ class TestGenerateSum:
 
 
 class TestContainerManager:
-    def test_omnibus(self, datadir):
+    def test_omnibus(self, datadir) -> None:
         proj_root = datadir / "project"
         project = Project(proj_root)
         challenge_loader = ChallengeLoader(project)
         chall = challenge_loader.load(proj_root / "chall")
         container_mgr = docker.ContainerManager(chall)
-        assert container_mgr.containers["main"].name == "main"
-        assert container_mgr.containers["main"].IS_BUILDABLE
-        assert type(container_mgr.containers["main"]) == docker.BuildableContainer
-        assert container_mgr.containers["postgres"].name == "postgres"
-        assert not container_mgr.containers["postgres"].IS_BUILDABLE
-        assert type(container_mgr.containers["postgres"]) == docker.Container
+
+        simple_container = container_mgr.containers["simple"]
+        assert simple_container.name == "simple"
+        assert simple_container.IS_BUILDABLE
+        assert type(simple_container) == docker.BuildableContainer
+        simple_container = cast(docker.BuildableContainer, simple_container)
+        assert simple_container.get_full_tag().startswith("registry.com/ns/")
+        assert "simple" in simple_container.get_full_tag()
+        assert simple_container.dockerfile == "Dockerfile"
+        assert simple_container.buildargs == dict()
+
+        complex_container = container_mgr.containers["complex"]
+        assert complex_container.name == "complex"
+        assert complex_container.IS_BUILDABLE
+        assert type(complex_container) == docker.BuildableContainer
+        complex_container = cast(docker.BuildableContainer, complex_container)
+        assert complex_container.get_full_tag().startswith("registry.com/ns/")
+        assert "complex" in complex_container.get_full_tag()
+        assert complex_container.dockerfile == "Dockerfile.alternate"
+        assert complex_container.buildargs["foo"] == "bar"
+
+        pg_container = container_mgr.containers["postgres"]
+        assert pg_container.name == "postgres"
+        assert not pg_container.IS_BUILDABLE
+        assert type(pg_container) == docker.Container
+        assert pg_container.get_full_tag() == "postgres"

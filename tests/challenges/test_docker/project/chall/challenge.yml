@@ -2,8 +2,16 @@ name: Challenge
 description: Description
 
 containers:
-  main:
+  simple:
     build: .
+    ports:
+    - 9999
+  complex:
+    build:
+      context: .
+      dockerfile: Dockerfile.alternate
+      args:
+        foo: "bar"
     ports:
     - 9999
   postgres:
