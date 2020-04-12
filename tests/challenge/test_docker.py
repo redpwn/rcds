@@ -1,10 +1,10 @@
-from rcds.challenge import docker
-from rcds import Project, ChallengeLoader
-
 from pathlib import Path
+from typing import cast
+
 import pytest
 
-from typing import cast
+from rcds import ChallengeLoader, Project
+from rcds.challenge import docker
 
 
 class TestGetContextFiles:

@@ -1,9 +1,9 @@
-from pathlib import Path
 import hashlib
-import pathspec  # type: ignore
-import docker  # type: ignore
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Dict, Iterator, Type, cast
 
-from typing import TYPE_CHECKING, Iterator, Dict, Any, cast, Type
+import docker  # type: ignore
+import pathspec  # type: ignore
 
 if TYPE_CHECKING:  # pragma: no cover
     from .challenge import Challenge

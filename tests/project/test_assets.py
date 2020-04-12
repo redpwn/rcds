@@ -1,12 +1,13 @@
-from rcds.project import assets
-from pathlib import Path
-import rcds
-from textwrap import dedent
-import time
 import io
-
+import time
+from pathlib import Path
+from textwrap import dedent
 from unittest import mock
+
 import pytest  # type: ignore
+
+import rcds
+from rcds.project import assets
 
 
 def _create_project(path: Path) -> None:

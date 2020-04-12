@@ -1,7 +1,9 @@
-from rcds.challenge import ChallengeLoader
-from rcds import Project
 from pathlib import Path
+
 import pytest  # type: ignore
+
+from rcds import Project
+from rcds.challenge import ChallengeLoader
 
 
 @pytest.fixture

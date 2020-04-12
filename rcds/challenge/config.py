@@ -1,10 +1,11 @@
-from pathlib import Path
-from ..util import load_any
 from itertools import tee
-from jsonschema import Draft7Validator  # type: ignore
-import jsonschema.exceptions  # type: ignore
-
+from pathlib import Path
 from typing import TYPE_CHECKING, Iterable, Optional, Tuple, Union
+
+import jsonschema.exceptions  # type: ignore
+from jsonschema import Draft7Validator  # type: ignore
+
+from ..util import load_any
 
 if TYPE_CHECKING:  # pragma: no cover
     from rcds import Project

@@ -1,21 +1,21 @@
+import io
+import os
+import pathlib
+import shutil
+from dataclasses import dataclass
+from pathlib import Path
 from typing import (
     TYPE_CHECKING,
-    cast,
-    Union,
     BinaryIO,
+    ByteString,
     Callable,
     Dict,
     Iterable,
     Tuple,
-    ByteString,
+    Union,
+    cast,
 )
-from pathlib import Path
-from dataclasses import dataclass
 from warnings import warn
-import pathlib
-import io
-import shutil
-import os
 
 if TYPE_CHECKING:  # pragma: no cover
     from .project import Project

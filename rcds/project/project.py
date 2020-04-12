@@ -1,8 +1,11 @@
-from ..challenge import Challenge, ChallengeLoader
-from rcds.util import find_files, load_any, SUPPORTED_EXTENSIONS
 from pathlib import Path, PurePosixPath
+from typing import Any, Dict, Optional
+
 import docker  # type: ignore
-from typing import Dict, Optional, Any
+
+from rcds.util import SUPPORTED_EXTENSIONS, find_files, load_any
+
+from ..challenge import Challenge, ChallengeLoader
 
 
 class Project:

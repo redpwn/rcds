@@ -1,8 +1,8 @@
 from pathlib import Path
-from ..util import find_files, SUPPORTED_EXTENSIONS
-from .config import ConfigLoader
+from typing import TYPE_CHECKING, Any, Dict
 
-from typing import TYPE_CHECKING, Dict, Any
+from ..util import SUPPORTED_EXTENSIONS, find_files
+from .config import ConfigLoader
 
 if TYPE_CHECKING:  # pragma: no cover
     from ..project import Project

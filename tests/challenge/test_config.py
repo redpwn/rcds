@@ -1,6 +1,7 @@
-from rcds.challenge import config
-from rcds import Project
 import pytest  # type: ignore
+
+from rcds import Project
+from rcds.challenge import config
 
 
 @pytest.fixture

@@ -1,7 +1,8 @@
-from pathlib import Path
 from itertools import chain
+from pathlib import Path
+from typing import Dict, List, Optional
+
 from .load import SUPPORTED_EXTENSIONS
-from typing import List, Dict, Optional
 
 
 def find_files(

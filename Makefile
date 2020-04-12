@@ -2,7 +2,7 @@ POETRY ?= poetry
 PYTHON ?= $(POETRY) run python
 
 .PHONY: lint
-lint: black flake8 mypy
+lint: isort black flake8 mypy
 
 .PHONY: test
 test:
@@ -11,6 +11,10 @@ test:
 .PHONY: cover
 cover:
 	$(POETRY) run coverage run -m pytest
+
+.PHONY: htmlcov
+htmlcov: cover
+	$(POETRY) run coverage html
 
 .PHONY: mypy
 mypy:
@@ -24,6 +28,6 @@ black:
 flake8:
 	$(POETRY) run flake8 .
 
-.PHONY: htmlcov
-htmlcov: cover
-	$(POETRY) run coverage html
+.PHONY: isort
+isort:
+	$(POETRY) run isort -y

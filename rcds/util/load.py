@@ -1,6 +1,7 @@
 import json
-import yaml
 from pathlib import Path
+
+import yaml
 
 
 def load_yaml(f: Path) -> dict:

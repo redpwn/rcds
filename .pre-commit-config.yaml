@@ -8,6 +8,12 @@ repos:
   - id: check-added-large-files
 - repo: local
   hooks:
+  - id: isort
+    name: isort
+    entry: poetry run isort
+    language: system
+    types: [python]
+    require_serial: true
   - id: black
     name: black
     entry: poetry run black
