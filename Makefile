@@ -23,3 +23,7 @@ black:
 .PHONY: flake8
 flake8:
 	$(POETRY) run flake8 .
+
+.PHONY: htmlcov
+htmlcov: cover
+	$(POETRY) run coverage html
