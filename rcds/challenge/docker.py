@@ -22,7 +22,7 @@ def get_context_files(root: Path) -> Iterator[Path]:
     if dockerignore.exists():
         with dockerignore.open("r") as fd:
             spec = pathspec.PathSpec.from_lines("gitwildmatch", fd)
-        files = filter(lambda p: not spec.match_file(str(p.relative_to(root))), files)
+        files = filter(lambda p: not spec.match_file(p.relative_to(root)), files)
     return filter(lambda p: p.is_file(), files)
 
 
