@@ -122,6 +122,15 @@ version = "5.0.4"
 toml = ["toml"]
 
 [[package]]
+category = "main"
+description = "A backport of the dataclasses module for Python 3.6"
+marker = "python_version >= \"3.6\" and python_version < \"3.7\""
+name = "dataclasses"
+optional = false
+python-versions = ">=3.6, <3.7"
+version = "0.7"
+
+[[package]]
 category = "dev"
 description = "Distribution utilities"
 marker = "python_version >= \"3.6.1\" and python_version < \"4.0.0\""
@@ -788,7 +797,7 @@ six = "*"
 [[package]]
 category = "main"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-marker = "python_version >= \"3.6.1\" and python_version < \"3.7\" or python_version >= \"3.6.1\" and python_version < \"3.8\" or python_version < \"3.8\" or python_version >= \"3.6.1\" and python_version < \"3.7\" and (python_version >= \"3.6.1\" and python_version < \"3.7\" or python_version >= \"3.6.1\" and python_version < \"3.8\" or python_version < \"3.8\") or python_version >= \"3.6.1\" and python_version < \"3.8\" and (python_version >= \"3.6.1\" and python_version < \"3.7\" or python_version >= \"3.6.1\" and python_version < \"3.8\" or python_version < \"3.8\")"
+marker = "python_version >= \"3.6.1\" and python_version < \"3.7\" or python_version >= \"3.6.1\" and python_version < \"3.8\" or python_version < \"3.8\""
 name = "zipp"
 optional = false
 python-versions = ">=3.6"
@@ -799,7 +808,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "8fb4890310c02ffe331ee4941e5abd65591afcaeee5cdd91000c80b2157ed1a7"
+content-hash = "899a43c49390d64366423f92ae7519567b5e8dda0b28de98d0792a729624868a"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -879,6 +888,10 @@ coverage = [
     {file = "coverage-5.0.4-cp39-cp39-win32.whl", hash = "sha256:7c9762f80a25d8d0e4ab3cb1af5d9dffbddb3ee5d21c43e3474c84bf5ff941f7"},
     {file = "coverage-5.0.4-cp39-cp39-win_amd64.whl", hash = "sha256:4482f69e0701139d0f2c44f3c395d1d1d37abd81bfafbf9b6efbe2542679d892"},
     {file = "coverage-5.0.4.tar.gz", hash = "sha256:1b60a95fc995649464e0cd48cecc8288bac5f4198f21d04b8229dc4097d76823"},
+]
+dataclasses = [
+    {file = "dataclasses-0.7-py3-none-any.whl", hash = "sha256:3459118f7ede7c8bea0fe795bff7c6c2ce287d01dd226202f7c9ebc0610a7836"},
+    {file = "dataclasses-0.7.tar.gz", hash = "sha256:494a6dcae3b8bcf80848eea2ef64c0cc5cd307ffc263e17cdf42f3e5420808e6"},
 ]
 distlib = [
     {file = "distlib-0.3.0.zip", hash = "sha256:2e166e231a26b36d6dfe35a48c4464346620f8645ed0ace01ee31822b288de21"},
