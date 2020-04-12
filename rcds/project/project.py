@@ -1,6 +1,6 @@
 from ..challenge import Challenge, ChallengeLoader
 from rcds.util import find_files, load_any, SUPPORTED_EXTENSIONS
-from pathlib import Path, PosixPath
+from pathlib import Path, PurePosixPath
 import docker  # type: ignore
 from typing import Dict, Optional, Any
 
@@ -45,4 +45,4 @@ class Project:
         except KeyError:
             pass
         # FIXME: better implementation than abusing PosixPath?
-        return str(PosixPath(self.config["docker"]["registry"]) / image)
+        return str(PurePosixPath(self.config["docker"]["registry"]) / image)
