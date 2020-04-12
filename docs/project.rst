@@ -5,3 +5,9 @@
 
 .. autoclass:: rcds.Project
     :members:
+
+:mod:`rcds.project.assets` - Asset management
+---------------------------------------------
+
+.. automodule:: rcds.project.assets
+    :members:
