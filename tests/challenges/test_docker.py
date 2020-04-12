@@ -1,6 +1,9 @@
 from rcds.challenge import docker
 from rcds import Project, ChallengeLoader
 
+from pathlib import Path
+import pytest
+
 from typing import cast
 
 
@@ -38,11 +41,13 @@ class TestGenerateSum:
 
 
 class TestContainerManager:
-    def test_omnibus(self, datadir) -> None:
-        proj_root = datadir / "project"
-        project = Project(proj_root)
+    @pytest.fixture()
+    def project(self, datadir: Path) -> Project:
+        return Project(datadir / "project")
+
+    def test_omnibus(self, project: Project) -> None:
         challenge_loader = ChallengeLoader(project)
-        chall = challenge_loader.load(proj_root / "chall")
+        chall = challenge_loader.load(project.root / "chall")
         container_mgr = docker.ContainerManager(chall)
 
         simple_container = container_mgr.containers["simple"]
@@ -70,3 +75,13 @@ class TestContainerManager:
         assert not pg_container.IS_BUILDABLE
         assert type(pg_container) == docker.Container
         assert pg_container.get_full_tag() == "postgres"
+
+    def test_multiple_chall_independence(self, project) -> None:
+        challenge_loader = ChallengeLoader(project)
+        chall1 = challenge_loader.load(project.root / "chall")
+        chall2 = challenge_loader.load(project.root / "chall2")
+        chall1_mgr = docker.ContainerManager(chall1)
+        chall2_mgr = docker.ContainerManager(chall2)
+
+        assert "chall2ctr" not in chall1_mgr.containers
+        assert "postgres" not in chall2_mgr.containers

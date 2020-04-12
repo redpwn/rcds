@@ -1,0 +1,7 @@
+name: chall2
+description: desc
+
+containers:
+  chall2ctr:
+    build: .
+    ports: [9999]

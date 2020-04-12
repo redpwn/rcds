@@ -162,7 +162,7 @@ class ContainerManager:
     challenge: "Challenge"
     project: "Project"
     config: Dict[str, Dict[str, Any]]
-    containers: Dict[str, Container] = dict()
+    containers: Dict[str, Container]
 
     def __init__(self, challenge: "Challenge"):
         """
@@ -172,6 +172,7 @@ class ContainerManager:
 
         self.challenge = challenge
         self.project = self.challenge.project
+        self.containers = dict()
         self.config = cast(
             Dict[str, Dict[str, Any]], self.challenge.config.get("containers", dict())
         )
