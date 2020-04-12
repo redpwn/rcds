@@ -1,7 +1,7 @@
 :mod:`rcds.challenge` - Challenges
 ==================================
 
-.. module:: rcds.challenge
+.. automodule:: rcds.challenge
 
 .. autoclass:: rcds.ChallengeLoader
     :members:

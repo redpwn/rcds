@@ -6,13 +6,22 @@ from typing import Dict, Optional, Any
 
 
 class Project:
+    """
+    An rCDS project; the context that all actions are done within
+    """
+
     root: Path
     config: dict
     challenges: Dict[Path, Challenge]
     challenge_loader: ChallengeLoader
     docker_client: Any
 
-    def __init__(self, root: Path, docker_client: Optional[Any] = None):
+    def __init__(
+        self, root: Path, docker_client: Optional[docker.client.DockerClient] = None
+    ):
+        """
+        Create a project
+        """
         root = root.resolve()
         try:
             cfg_file = find_files(
