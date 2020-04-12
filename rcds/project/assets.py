@@ -1,4 +1,5 @@
 import io
+import json
 import os
 import pathlib
 import shutil
@@ -11,6 +12,7 @@ from typing import (
     Callable,
     Dict,
     Iterable,
+    Set,
     Tuple,
     Union,
     cast,
@@ -102,8 +104,7 @@ class AssetManagerTransaction:
         """
         if not self._is_active:
             raise RuntimeError("This transaction has already been committed")
-        if not _is_valid_name(name):
-            raise ValueError(f"Invalid asset name '{name}'")
+        self._asset_manager_context._assert_valid_name(name)
         get_contents: Callable[[], File]
         if callable(contents):
             get_contents = contents
@@ -153,27 +154,25 @@ class AssetManagerTransaction:
         """
         self._is_active = False
         self._asset_manager_context._is_transaction_active = False
-        files_to_delete = set(self._asset_manager_context._root.iterdir())
+        files_to_delete = set(self._asset_manager_context.ls())
         print(files_to_delete)
         for name, file_entry in self._files.items():
-            fpath = self._asset_manager_context._root / name
+            fpath = self._asset_manager_context._get(name)
             try:
-                # TODO: maybe resolve all paths when checking what files to delete?
-                files_to_delete.remove(fpath)
+                files_to_delete.remove(name)
             except KeyError:
                 pass
-            if fpath.exists() and not fpath.is_file():
-                raise RuntimeError(f"Unexpected item found in cache: '{str(fpath)}'")
-            if fpath.exists():
+            if self._asset_manager_context.exists(name):
                 cache_mtime = self._asset_manager_context.get_mtime(name)
                 if not file_entry.mtime > cache_mtime:
                     continue
             self._create(fpath, file_entry)
+            self._asset_manager_context._add(name, force=True)
         print(files_to_delete)
-        for file in files_to_delete:
-            if not file.is_file():
-                raise RuntimeError(f"Unexpected item found in cache: '{str(fpath)}'")
-            file.unlink()
+        for name in files_to_delete:
+            fpath = self._asset_manager_context.get(name)
+            fpath.unlink()
+            self._asset_manager_context._rm(name)
 
 
 class AssetManagerContext:
@@ -190,6 +189,9 @@ class AssetManagerContext:
     _asset_manager: "AssetManager"
     _name: str
     _root: Path
+    _files: Set[str]
+    _files_root: Path
+    _manifest_file: Path
 
     _is_transaction_active: bool
 
@@ -199,9 +201,24 @@ class AssetManagerContext:
         """
         self._asset_manager = asset_manager
         self._name = name
+        self._files = set()
         self._is_transaction_active = False
         self._root = self._asset_manager.root / name
         self._root.mkdir(parents=True, exist_ok=True)
+        self._files_root = self._root / "files"
+        self._files_root.mkdir(exist_ok=True)
+        self._manifest_file = self._root / "manifest.json"
+
+        try:
+            with self._manifest_file.open("r") as fd:
+                manifest = json.load(fd)
+            self._files = set(manifest["files"])
+        except FileNotFoundError:
+            pass
+
+    def _assert_valid_name(self, name: str) -> None:
+        if not _is_valid_name(name):
+            raise ValueError(f"Invalid asset name '{name}'")
 
     def transaction(self) -> AssetManagerTransaction:
         """
@@ -221,32 +238,86 @@ class AssetManagerContext:
         self._is_transaction_active = True
         return AssetManagerTransaction(self)
 
+    def sync(self, *, check: bool = True):
+        """
+        Syncs the manifest for this context to disk
+
+        :param bool check: If true (default), check to make sure all files in the
+            manifest exist, and that there are no extra files
+        """
+        if check:
+            disk = set(self._files_root.iterdir())
+            files = {self._files_root / f for f in self._files}
+            for extra in disk - files:
+                warn(
+                    RuntimeWarning(
+                        f"Unexpected item found in cache: '{str(extra)}'; removing..."
+                    )
+                )
+                if extra.is_dir():
+                    shutil.rmtree(extra)
+                else:
+                    extra.unlink()
+            for missing in self._files - disk:
+                raise RuntimeError(f"Cache item missing: '{str(missing)}'")
+        with self._manifest_file.open("w") as fd:
+            json.dump({"files": sorted(self._files)}, fd)
+
+    def _add(self, name: str, *, force: bool = False) -> None:
+        """
+        Add an asset to the manifest
+
+        :meta private:
+        :param str name: The name of the asset
+        :param bool force: If true, do not error if the asset already exists
+        """
+        self._assert_valid_name(name)
+        if not force and name in self._files:
+            raise FileExistsError(f"Asset already exists: '{name}'")
+        self._files.add(name)
+
+    def _rm(self, name: str, *, force: bool = False) -> None:
+        """
+        Remove an asset from the manifest
+
+        :meta private:
+        :param str name: The name of the asset
+        :param bool force: If true, do not error if the asset does not exist
+        """
+        self._assert_valid_name(name)
+        try:
+            self._files.remove(name)
+        except KeyError:
+            if not force:
+                raise FileNotFoundError(f"Asset not found: '{name}'")
+
     def ls(self) -> Iterable[str]:
         """
         List all files within this context
 
         :returns: The list of asset names
         """
-        for f in self._root.iterdir():
-            if not f.is_file():
-                raise RuntimeError(f"Unexpected item found in cache: '{str(f)}'")
-            yield f.name
+        return self._files
 
-    def clear(self) -> None:
+    def _get(self, name: str) -> Path:
         """
-        Clear all files in this context
+        Retrieves the path for an asset with the given name, even if it does not already
+        exist
+
+        :meta private:
         """
-        for f in self._root.iterdir():
-            if not f.is_file():
-                warn(
-                    RuntimeWarning(
-                        f"Unexpected item found in cache: '{str(f)}'; removing..."
-                    )
-                )
-                if f.is_dir():
-                    shutil.rmtree(f)
-                    continue
-            f.unlink()
+        self._assert_valid_name(name)
+        return self._files_root / name
+
+    def exists(self, name: str) -> bool:
+        """
+        Queries if an asset exists
+
+        :param str name: The name of the asset
+        :returns: Whether or not it exists
+        """
+        self._assert_valid_name(name)
+        return name in self._files
 
     def get(self, name: str) -> Path:
         """
@@ -255,9 +326,9 @@ class AssetManagerContext:
         :param str name: The name of the asset
         :returns: The asset
         """
-        if not _is_valid_name(name):
-            raise ValueError(f"Invalid asset name '{name}'")
-        return self._root / name
+        if not self.exists(name):
+            raise FileNotFoundError(f"Asset not found: '{name}'")
+        return self._get(name)
 
     def get_mtime(self, name: str) -> float:
         """
@@ -267,6 +338,15 @@ class AssetManagerContext:
         :returns: The time the asset was modified (:attr`os.stat_result.st_mtime`)
         """
         return self.get(name).stat().st_mtime
+
+    def clear(self) -> None:
+        """
+        Clear all files in this context
+        """
+        for f in self.ls():
+            self.get(f).unlink()
+        self._files = set()
+        self.sync(check=True)
 
 
 class AssetManager:

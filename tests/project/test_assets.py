@@ -14,7 +14,7 @@ def _create_project(path: Path) -> None:
     (path / "rcds.yml").write_text(
         dedent(
             """\
-    """
+            """
         )
     )
 
@@ -28,6 +28,14 @@ def am_fn(tmp_path: Path) -> assets.AssetManager:
     _create_project(root)
     project = rcds.Project(root)
     return assets.AssetManager(project)
+
+
+def test_name_validation() -> None:
+    assert assets._is_valid_name("valid")
+    assert not assets._is_valid_name("../directory_traversal")
+    assert not assets._is_valid_name(r"..\win_dir_traversal")
+    assert not assets._is_valid_name("/absolute")
+    assert not assets._is_valid_name(r"C:\win_absolute")
 
 
 def test_list_contexts(am_fn: assets.AssetManager) -> None:
@@ -88,6 +96,22 @@ def test_create_from_thunk(am_fn: assets.AssetManager) -> None:
     asset_file = ctx.get("file")
     with asset_file.open("rb") as fd:
         assert fd.read() == contents
+
+
+def test_create_from_multiple_literals(am_fn: assets.AssetManager) -> None:
+    asset_manager = am_fn
+    ctx = asset_manager.create_context("challenge")
+    contents1 = b"abcd"
+    contents2 = b"wxyz"
+    transaction = ctx.transaction()
+    transaction.add("file1", time.time(), contents1)
+    transaction.add("file2", time.time(), contents2)
+    transaction.commit()
+    assert set(ctx.ls()) == {"file1", "file2"}
+    with ctx.get("file1").open("rb") as fd:
+        assert fd.read() == contents1
+    with ctx.get("file2").open("rb") as fd:
+        assert fd.read() == contents2
 
 
 def test_transaction_clear(datadir: Path, am_fn: assets.AssetManager) -> None:
