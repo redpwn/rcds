@@ -29,6 +29,7 @@ def test_expose_no_containers(configloader, test_datadir) -> None:
     error_messages = [str(e) for e in errors]
     assert len(errors) != 0
     assert "Cannot expose ports without containers defined" in error_messages
+    assert sum([1 for e in errors if isinstance(e, config.TargetNotFoundError)]) == 1
 
 
 def test_nonexistent_target_container(configloader, test_datadir) -> None:
@@ -41,6 +42,7 @@ def test_nonexistent_target_container(configloader, test_datadir) -> None:
         '`expose` references container "main" but it is not defined in `containers`'
         in error_messages
     )
+    assert sum([1 for e in errors if isinstance(e, config.TargetNotFoundError)]) == 1
 
 
 def test_nonexistent_target_port(configloader, test_datadir) -> None:
@@ -52,6 +54,7 @@ def test_nonexistent_target_port(configloader, test_datadir) -> None:
         '`expose` references port 1 on container "main" which is not defined'
         in error_messages
     )
+    assert sum([1 for e in errors if isinstance(e, config.TargetNotFoundError)]) == 1
 
 
 def test_nonexistent_provide_file(configloader, test_datadir) -> None:
@@ -61,6 +64,9 @@ def test_nonexistent_provide_file(configloader, test_datadir) -> None:
     assert len(errors) != 0
     assert (
         '`provide` references file "nonexistent" which does not exist' in error_messages
+    )
+    assert (
+        sum([1 for e in errors if isinstance(e, config.TargetFileNotFoundError)]) == 1
     )
 
 
@@ -72,6 +78,9 @@ def test_nonexistent_flag_file(configloader, test_datadir) -> None:
     assert (
         '`flag.file` references file "nonexistent" which does not exist'
         in error_messages
+    )
+    assert (
+        sum([1 for e in errors if isinstance(e, config.TargetFileNotFoundError)]) == 1
     )
 
 

@@ -1,9 +1,10 @@
 from itertools import tee
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterable, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Iterable, Optional, Tuple
 
-import jsonschema.exceptions  # type: ignore
 from jsonschema import Draft7Validator  # type: ignore
+
+from rcds import errors
 
 from ..util import load_any
 
@@ -14,6 +15,18 @@ if TYPE_CHECKING:  # pragma: no cover
 config_schema_validator = Draft7Validator(
     schema=load_any(Path(__file__).parent / "challenge.schema.yaml")
 )
+
+
+class TargetNotFoundError(errors.ValidationError):
+    pass
+
+
+class TargetFileNotFoundError(TargetNotFoundError):
+    target: Path
+
+    def __init__(self, message: str, target: Path):
+        super().__init__(message)
+        self.target = target
 
 
 class ConfigLoader:
@@ -30,11 +43,8 @@ class ConfigLoader:
         self.project = project
 
     def check_config(
-        self, config_file: Path,
-    ) -> Tuple[
-        dict,
-        Optional[Iterable[Union[jsonschema.exceptions.ValidationError, Exception]]],
-    ]:
+        self, config_file: Path
+    ) -> Tuple[dict, Optional[Iterable[errors.ValidationError]]]:
         """
         Load and validate a config file, returning any errors encountered.
 
@@ -47,10 +57,11 @@ class ConfigLoader:
         root = config_file.parent
         config = load_any(config_file)
 
-        def check() -> Iterable[
-            Union[jsonschema.exceptions.ValidationError, Exception]
-        ]:
-            schema_errors = config_schema_validator.iter_errors(config)
+        def check() -> Iterable[errors.ValidationError]:
+            schema_errors: Iterable[errors.SchemaValidationError] = (
+                errors.SchemaValidationError(str(e), e)
+                for e in config_schema_validator.iter_errors(config)
+            )
             # Make a duplicate to check whethere there are errors returned
             schema_errors, schema_errors_dup = tee(schema_errors)
             # This is the same test as used in Validator.is_valid
@@ -59,15 +70,13 @@ class ConfigLoader:
             else:
                 if "expose" in config:
                     if "containers" not in config:
-                        # FIXME: Use better error types
-                        yield ValueError(
+                        yield TargetNotFoundError(
                             "Cannot expose ports without containers defined"
                         )
                     else:
                         for key, expose_objs in config["expose"].items():
                             if key not in config["containers"]:
-                                # FIXME: Use better error types
-                                yield ValueError(
+                                yield TargetNotFoundError(
                                     f'`expose` references container "{key}" but '
                                     f"it is not defined in `containers`"
                                 )
@@ -77,8 +86,7 @@ class ConfigLoader:
                                         expose_obj["target"]
                                         not in config["containers"][key]["ports"]
                                     ):
-                                        # FIXME: Use better error types
-                                        yield ValueError(
+                                        yield TargetNotFoundError(
                                             f"`expose` references port "
                                             f'{expose_obj["target"]} on container '
                                             f'"{key}" which is not defined'
@@ -88,24 +96,26 @@ class ConfigLoader:
                         f = Path(f)
                         if not (root / f).is_file():
                             # FIXME: Use better error types
-                            yield FileNotFoundError(
+                            yield TargetFileNotFoundError(
                                 f'`provide` references file "{str(f)}" which does not '
-                                f"exist"
+                                f"exist",
+                                f,
                             )
                 if "flag" in config and isinstance(config["flag"], dict):
                     if "file" in config["flag"]:
                         f = Path(config["flag"]["file"])
                         if not (root / f).is_file():
                             # FIXME: Use better error types
-                            yield FileNotFoundError(
+                            yield TargetFileNotFoundError(
                                 f'`flag.file` references file "{str(f)}" which does '
-                                f"not exist"
+                                f"not exist",
+                                f,
                             )
 
-        errors = check()
-        errors, errors_dup = tee(errors)
-        has_errors = next(errors_dup, None) is not None
-        return (config, errors if has_errors else None)
+        validation_errors = check()
+        validation_errors, validation_errors_dup = tee(validation_errors)
+        has_errors = next(validation_errors_dup, None) is not None
+        return (config, validation_errors if has_errors else None)
 
     def load_config(self, config_file: Path) -> dict:
         """
