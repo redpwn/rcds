@@ -1,6 +1,6 @@
 from itertools import tee
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterable, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Tuple, Union, cast
 
 from jsonschema import Draft7Validator  # type: ignore
 
@@ -42,9 +42,78 @@ class ConfigLoader:
         """
         self.project = project
 
+    def parse_config(
+        self, config_file: Path
+    ) -> Iterable[Union[errors.ValidationError, Dict[str, Any]]]:
+        """
+        Load and validate a config file, returning both the config and any
+        errors encountered.
+
+        :param pathlib.Path config_file: The challenge config to load
+        :returns: Iterable containing any errors (all instances of
+            :class:`rcds.errors.ValidationError`) and the parsed config. The config will
+            always be last.
+        """
+        root = config_file.parent
+        config = load_any(config_file)
+        schema_errors: Iterable[errors.SchemaValidationError] = (
+            errors.SchemaValidationError(str(e), e)
+            for e in config_schema_validator.iter_errors(config)
+        )
+        # Make a duplicate to check whethere there are errors returned
+        schema_errors, schema_errors_dup = tee(schema_errors)
+        # This is the same test as used in Validator.is_valid
+        if next(schema_errors_dup, None) is not None:
+            yield from schema_errors
+        else:
+            if "expose" in config:
+                if "containers" not in config:
+                    yield TargetNotFoundError(
+                        "Cannot expose ports without containers defined"
+                    )
+                else:
+                    for key, expose_objs in config["expose"].items():
+                        if key not in config["containers"]:
+                            yield TargetNotFoundError(
+                                f'`expose` references container "{key}" but '
+                                f"it is not defined in `containers`"
+                            )
+                        else:
+                            for expose_obj in expose_objs:
+                                if (
+                                    expose_obj["target"]
+                                    not in config["containers"][key]["ports"]
+                                ):
+                                    yield TargetNotFoundError(
+                                        f"`expose` references port "
+                                        f'{expose_obj["target"]} on container '
+                                        f'"{key}" which is not defined'
+                                    )
+            if "provide" in config:
+                for f in config["provide"]:
+                    f = Path(f)
+                    if not (root / f).is_file():
+                        # FIXME: Use better error types
+                        yield TargetFileNotFoundError(
+                            f'`provide` references file "{str(f)}" which does not '
+                            f"exist",
+                            f,
+                        )
+            if "flag" in config and isinstance(config["flag"], dict):
+                if "file" in config["flag"]:
+                    f = Path(config["flag"]["file"])
+                    if not (root / f).is_file():
+                        # FIXME: Use better error types
+                        yield TargetFileNotFoundError(
+                            f'`flag.file` references file "{str(f)}" which does '
+                            f"not exist",
+                            f,
+                        )
+        yield config
+
     def check_config(
         self, config_file: Path
-    ) -> Tuple[dict, Optional[Iterable[errors.ValidationError]]]:
+    ) -> Tuple[Optional[Dict[str, Any]], Optional[Iterable[errors.ValidationError]]]:
         """
         Load and validate a config file, returning any errors encountered.
 
@@ -52,81 +121,35 @@ class ConfigLoader:
         the first element, and the second element is None. Otherwise, the second
         element is an iterable of errors that occurred during validation
 
+        This method wraps :meth:`parse_config`.
+
         :param pathlib.Path config_file: The challenge config to load
         """
-        root = config_file.parent
-        config = load_any(config_file)
-
-        def check() -> Iterable[errors.ValidationError]:
-            schema_errors: Iterable[errors.SchemaValidationError] = (
-                errors.SchemaValidationError(str(e), e)
-                for e in config_schema_validator.iter_errors(config)
+        load_data = self.parse_config(config_file)
+        load_data, load_data_dup = tee(load_data)
+        first = next(load_data_dup)
+        if isinstance(first, errors.ValidationError):
+            validation_errors = cast(
+                Iterable[errors.ValidationError],
+                filter(lambda v: isinstance(v, errors.ValidationError), load_data),
             )
-            # Make a duplicate to check whethere there are errors returned
-            schema_errors, schema_errors_dup = tee(schema_errors)
-            # This is the same test as used in Validator.is_valid
-            if next(schema_errors_dup, None) is not None:
-                yield from schema_errors
-            else:
-                if "expose" in config:
-                    if "containers" not in config:
-                        yield TargetNotFoundError(
-                            "Cannot expose ports without containers defined"
-                        )
-                    else:
-                        for key, expose_objs in config["expose"].items():
-                            if key not in config["containers"]:
-                                yield TargetNotFoundError(
-                                    f'`expose` references container "{key}" but '
-                                    f"it is not defined in `containers`"
-                                )
-                            else:
-                                for expose_obj in expose_objs:
-                                    if (
-                                        expose_obj["target"]
-                                        not in config["containers"][key]["ports"]
-                                    ):
-                                        yield TargetNotFoundError(
-                                            f"`expose` references port "
-                                            f'{expose_obj["target"]} on container '
-                                            f'"{key}" which is not defined'
-                                        )
-                if "provide" in config:
-                    for f in config["provide"]:
-                        f = Path(f)
-                        if not (root / f).is_file():
-                            # FIXME: Use better error types
-                            yield TargetFileNotFoundError(
-                                f'`provide` references file "{str(f)}" which does not '
-                                f"exist",
-                                f,
-                            )
-                if "flag" in config and isinstance(config["flag"], dict):
-                    if "file" in config["flag"]:
-                        f = Path(config["flag"]["file"])
-                        if not (root / f).is_file():
-                            # FIXME: Use better error types
-                            yield TargetFileNotFoundError(
-                                f'`flag.file` references file "{str(f)}" which does '
-                                f"not exist",
-                                f,
-                            )
+            return (None, validation_errors)
+        else:
+            return (first, None)
 
-        validation_errors = check()
-        validation_errors, validation_errors_dup = tee(validation_errors)
-        has_errors = next(validation_errors_dup, None) is not None
-        return (config, validation_errors if has_errors else None)
-
-    def load_config(self, config_file: Path) -> dict:
+    def load_config(self, config_file: Path) -> Dict[str, Any]:
         """
         Loads a config file, or throw an exception if it is not valid
 
         This method wraps :meth:`check_config`, and throws the first error returned
-        if there are any errors
+        if there are any errors.
 
+        :param pathlib.Path config_file: The challenge config to load
         :returns: The loaded config
         """
         config, errors = self.check_config(config_file)
         if errors is not None:
             raise next(iter(errors))
+        # errors is None
+        assert config is not None
         return config

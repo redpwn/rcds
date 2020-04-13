@@ -9,6 +9,12 @@
 .. autoclass:: rcds.Challenge
     :members:
 
+:mod:`rcds.challenge.config` - Config loading
+---------------------------------------------
+
+.. automodule:: rcds.challenge.config
+    :members:
+
 :mod:`rcds.challenge.docker` - Docker containers
 ------------------------------------------------
 
