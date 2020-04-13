@@ -7,16 +7,14 @@ Welcome to rCDS's documentation!
 ================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+    :maxdepth: 2
+    :caption: Contents
 
-
-
-API Reference
--------------
+    contributing
 
 .. toctree::
     :maxdepth: 2
+    :caption: API Reference
 
     project
     challenge
