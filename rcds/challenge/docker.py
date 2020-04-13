@@ -1,5 +1,5 @@
 import hashlib
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, Dict, Iterator, Type, cast
 
 import docker  # type: ignore
@@ -47,6 +47,7 @@ class Container:
     A single container
     """
 
+    manager: "ContainerManager"
     challenge: "Challenge"
     project: "Project"
     name: str
@@ -55,7 +56,8 @@ class Container:
     IS_BUILDABLE: bool = False
 
     def __init__(self, *, container_manager: "ContainerManager", name: str) -> None:
-        self.challenge = container_manager.challenge
+        self.manager = container_manager
+        self.challenge = self.manager.challenge
         self.project = self.challenge.project
         self.name = name
         self.config = container_manager.config[self.name]
@@ -115,7 +117,7 @@ class BuildableContainer(Container):
             self.dockerfile = build.get("dockerfile", "Dockerfile")
             self.buildargs = cast(Dict[str, str], build.get("args", dict()))
         self.content_hash = generate_sum(self.root)
-        self.image = self.project.get_docker_image(self.name)
+        self.image = self.manager.get_docker_image(self.name)
 
     def _build(self) -> None:
         self.project.docker_client.images.build(
@@ -187,3 +189,11 @@ class ContainerManager:
             self.containers[name] = container_constructor(
                 container_manager=self, name=name
             )
+
+    def get_docker_image(self, image: str) -> str:
+        try:
+            image = self.project.config["docker"]["image-prefix"] + image
+        except KeyError:
+            pass
+        # FIXME: better implementation than abusing PosixPath?
+        return str(PurePosixPath(self.project.config["docker"]["registry"]) / image)

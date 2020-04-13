@@ -1,4 +1,4 @@
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 import docker  # type: ignore
@@ -50,11 +50,3 @@ class Project:
 
     def get_challenge(self, relPath: Path) -> Challenge:
         return self.challenges[relPath]
-
-    def get_docker_image(self, image: str) -> str:
-        try:
-            image = self.config["docker"]["image-prefix"] + image
-        except KeyError:
-            pass
-        # FIXME: better implementation than abusing PosixPath?
-        return str(PurePosixPath(self.config["docker"]["registry"]) / image)
