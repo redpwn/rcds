@@ -45,6 +45,14 @@ def test_list_contexts(am_fn: assets.AssetManager) -> None:
     assert set(asset_manager.list_context_names()) == {"c1", "c2"}
 
 
+def test_get_nonexistent(am_fn: assets.AssetManager) -> None:
+    asset_manager = am_fn
+    ctx = asset_manager.create_context("challenge")
+    with pytest.raises(FileNotFoundError) as errinfo:
+        ctx.get("nonexistent")
+    assert str(errinfo.value) == "Asset not found: 'nonexistent'"
+
+
 def test_create_from_disk(datadir: Path, am_fn: assets.AssetManager) -> None:
     asset_manager = am_fn
     ctx = asset_manager.create_context("challenge")
@@ -263,3 +271,41 @@ def test_disallow_directories_files_add(
     with pytest.raises(ValueError) as errinfo:
         transaction.commit()
     assert "Provided file does not exist: " in str(errinfo.value)
+
+
+class TestInternals:
+    def test_add_remove(self, am_fn: assets.AssetManager) -> None:
+        asset_manager = am_fn
+        ctx = asset_manager.create_context("challenge")
+        ctx._add("file")
+        assert "file" in ctx.ls()
+        ctx._rm("file")
+        assert "file" not in ctx.ls()
+
+    def test_add_existing_raises(self, am_fn: assets.AssetManager) -> None:
+        asset_manager = am_fn
+        ctx = asset_manager.create_context("challenge")
+        ctx._add("file", force=True)
+        with pytest.raises(FileExistsError) as errinfo:
+            ctx._add("file", force=False)
+        assert str(errinfo.value) == "Asset already exists: 'file'"
+
+    def test_force_add_existing(self, am_fn: assets.AssetManager) -> None:
+        asset_manager = am_fn
+        ctx = asset_manager.create_context("challenge")
+        ctx._add("file", force=True)
+        ctx._add("file", force=True)
+        assert "file" in ctx.ls()
+
+    def test_remove_nonexistent_raises(self, am_fn: assets.AssetManager) -> None:
+        asset_manager = am_fn
+        ctx = asset_manager.create_context("challenge")
+        with pytest.raises(FileNotFoundError) as errinfo:
+            ctx._rm("file", force=False)
+        assert str(errinfo.value) == "Asset not found: 'file'"
+
+    def test_force_remove_nonexistent(self, am_fn: assets.AssetManager) -> None:
+        asset_manager = am_fn
+        ctx = asset_manager.create_context("challenge")
+        ctx._rm("file", force=True)
+        assert "file" not in ctx.ls()
