@@ -1,5 +1,10 @@
 $schema: http://json-schema.org/draft-07/schema#
 $id: http://rcds.redpwn.com/schemas/challenge.yaml
+definitions:
+  domainsafe-name:
+    type: string
+    # k8s allows a max length of 253 characters
+    pattern: "^[a-zA-Z0-9]([a-zA-Z0-9-]{0,251}[a-zA-Z0-9])?$"
 type: object
 properties:
   # Basic challenge details
@@ -147,6 +152,8 @@ properties:
         - image
       - required:
         - build
+    propertyNames:
+      $ref: "#/definitions/domainsafe-name"
   expose:
     type: object
     description: >-
@@ -178,6 +185,8 @@ properties:
         anyOf:
           - required: [http]
           - required: [tcp]
+    propertyNames:
+      $ref: "#/definitions/domainsafe-name"
 required:
 - name
 - description
