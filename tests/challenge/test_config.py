@@ -21,6 +21,7 @@ def configloader(datadir):
 def test_valid(configloader, test_datadir) -> None:
     cfg, errors = configloader.check_config(test_datadir / "challenge.yml")
     assert errors is None
+    assert cfg["flag"] == "flag{test_flag_here}"
 
 
 def test_schema_fail(configloader, test_datadir) -> None:

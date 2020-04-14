@@ -96,7 +96,6 @@ class ConfigLoader:
                 for f in config["provide"]:
                     f = Path(f)
                     if not (root / f).is_file():
-                        # FIXME: Use better error types
                         yield TargetFileNotFoundError(
                             f'`provide` references file "{str(f)}" which does not '
                             f"exist",
@@ -105,8 +104,12 @@ class ConfigLoader:
             if "flag" in config and isinstance(config["flag"], dict):
                 if "file" in config["flag"]:
                     f = Path(config["flag"]["file"])
-                    if not (root / f).is_file():
-                        # FIXME: Use better error types
+                    f_resolved = root / f
+                    if f_resolved.is_file():
+                        with f_resolved.open("r") as fd:
+                            flag = fd.read().strip()
+                        config["flag"] = flag
+                    else:
                         yield TargetFileNotFoundError(
                             f'`flag.file` references file "{str(f)}" which does '
                             f"not exist",
