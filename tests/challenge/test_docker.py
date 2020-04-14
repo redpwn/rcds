@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import cast
 
-import pytest
+import pytest  # type: ignore
 
 from rcds import ChallengeLoader, Project
 from rcds.challenge import docker

@@ -56,6 +56,9 @@ class ConfigLoader:
         """
         root = config_file.parent
         config = load_any(config_file)
+
+        config.setdefault("id", root.name)  # derive id from parent directory name
+
         schema_errors: Iterable[errors.SchemaValidationError] = (
             errors.SchemaValidationError(str(e), e)
             for e in config_schema_validator.iter_errors(config)

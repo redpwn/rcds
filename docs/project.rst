@@ -6,6 +6,12 @@
 .. autoclass:: rcds.Project
     :members:
 
+:mod:`rcds.project.config` - Config loading
+-------------------------------------------
+
+.. automodule:: rcds.project.config
+    :members:
+
 :mod:`rcds.project.assets` - Asset management
 ---------------------------------------------
 

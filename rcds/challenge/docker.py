@@ -117,7 +117,7 @@ class BuildableContainer(Container):
             self.dockerfile = build.get("dockerfile", "Dockerfile")
             self.buildargs = cast(Dict[str, str], build.get("args", dict()))
         self.content_hash = generate_sum(self.root)
-        self.image = self.manager.get_docker_image(self.name)
+        self.image = self.manager.get_docker_image(self)
 
     def _build(self) -> None:
         self.project.docker_client.images.build(
@@ -190,10 +190,17 @@ class ContainerManager:
                 container_manager=self, name=name
             )
 
-    def get_docker_image(self, image: str) -> str:
-        try:
-            image = self.project.config["docker"]["image-prefix"] + image
-        except KeyError:
-            pass
+    def get_docker_image(self, container: Container) -> str:
+        image_template = self.project.jinja_env.from_string(
+            self.project.config["docker"]["image"]["template"]
+        )
+        template_context = {
+            "challenge": self.challenge.config,
+            "container": dict(container.config),
+        }
+        template_context["container"]["name"] = container.name
+        image = image_template.render(template_context)
         # FIXME: better implementation than abusing PosixPath?
-        return str(PurePosixPath(self.project.config["docker"]["registry"]) / image)
+        return str(
+            PurePosixPath(self.project.config["docker"]["image"]["prefix"]) / image
+        )

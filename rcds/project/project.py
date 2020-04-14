@@ -2,10 +2,12 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 import docker  # type: ignore
+from jinja2 import Environment
 
-from rcds.util import SUPPORTED_EXTENSIONS, find_files, load_any
+from rcds.util import SUPPORTED_EXTENSIONS, find_files
 
 from ..challenge import Challenge, ChallengeLoader
+from . import config
 
 
 class Project:
@@ -17,6 +19,8 @@ class Project:
     config: dict
     challenges: Dict[Path, Challenge]
     challenge_loader: ChallengeLoader
+
+    jinja_env: Environment
     docker_client: Any
 
     def __init__(
@@ -33,8 +37,9 @@ class Project:
         except KeyError:
             raise ValueError(f"No config file found at '{root}'")
         self.root = root
-        self.config = load_any(cfg_file)
+        self.config = config.load_config(cfg_file)
         self.challenge_loader = ChallengeLoader(self)
+        self.jinja_env = Environment(autoescape=False)
         if docker_client is not None:
             self.docker_client = docker_client
         else:

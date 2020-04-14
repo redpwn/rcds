@@ -8,6 +8,12 @@ definitions:
 type: object
 properties:
   # Basic challenge details
+  id:
+    type: string
+    description: >-
+      Override the automatically generated id for this challenge. You should
+      avoid setting this whenever possible.
+    pattern: "^[a-zA-Z0-9]([a-zA-Z0-9_-]*[a-zA-Z0-9])?$"
   name:
     type: string
     description: >-
