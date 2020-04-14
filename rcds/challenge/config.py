@@ -1,6 +1,7 @@
 from itertools import tee
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Tuple, Union, cast
+from warnings import warn
 
 from jsonschema import Draft7Validator  # type: ignore
 
@@ -101,20 +102,27 @@ class ConfigLoader:
                             f"exist",
                             f,
                         )
-            if "flag" in config and isinstance(config["flag"], dict):
-                if "file" in config["flag"]:
-                    f = Path(config["flag"]["file"])
-                    f_resolved = root / f
-                    if f_resolved.is_file():
-                        with f_resolved.open("r") as fd:
-                            flag = fd.read().strip()
-                        config["flag"] = flag
-                    else:
-                        yield TargetFileNotFoundError(
-                            f'`flag.file` references file "{str(f)}" which does '
-                            f"not exist",
-                            f,
+            if "flag" in config:
+                if isinstance(config["flag"], dict):
+                    if "file" in config["flag"]:
+                        f = Path(config["flag"]["file"])
+                        f_resolved = root / f
+                        if f_resolved.is_file():
+                            with f_resolved.open("r") as fd:
+                                flag = fd.read().strip()
+                            config["flag"] = flag
+                        else:
+                            yield TargetFileNotFoundError(
+                                f'`flag.file` references file "{str(f)}" which does '
+                                f"not exist",
+                                f,
+                            )
+                if isinstance(config["flag"], str) and config["flag"].count("\n") > 0:
+                    warn(
+                        RuntimeWarning(
+                            "Flag contains multiple lines; is this intended?"
                         )
+                    )
         yield config
 
     def check_config(
