@@ -5,10 +5,10 @@ properties:
   # Basic challenge details
   name:
     type: string
-    description: >
+    description: >-
       The name of the challenge
   author:
-    description: >
+    description: >-
       The author(s) of the challenge
     oneOf:
     - type: string
@@ -17,11 +17,11 @@ properties:
         type: string
   description:
     type: string
-    description: >
+    description: >-
       Description of the challenge. It is in Markdown format and will be
       processed with Jinja.
   flag:
-    description: >
+    description: >-
       The flag for the challenge.
     oneOf:
     - type: string
@@ -29,7 +29,7 @@ properties:
       properties:
         file:
           type: string
-          description: >
+          description: >-
             File to load the flag from. The file should contain one line with
             only the flag.
         regex:
@@ -45,7 +45,7 @@ properties:
         - required: [regex]
   value:
     type: integer
-    description: >
+    description: >-
       The point value of the challenge, or full point value for a
       dynamically-scored challenge; the precise meaning is defined by the
       scoreboard backend being used.
@@ -54,22 +54,22 @@ properties:
   # Static assets
   provide:
     type: array
-    description: >
+    description: >-
       Static files (that are in the repository already on disk) to provide to competitors
     items:
       oneOf:
       - type: string
-        description: >
+        description: >-
           Path to the file to provide
       - type: object
         properties:
           file:
             type: string
-            description: >
+            description: >-
               Path to the file to provide
           as:
             type: string
-            description: >
+            description: >-
               Name of file as shown to competitors
         required:
         - file
@@ -78,7 +78,7 @@ properties:
   # Runtime (containers)
   containers:
     type: object
-    description: >
+    description: >-
       Containers to be deployed for this challenge. The key of each container
       is its name, where the container can be found via DNS lookup at runtime
       from other containers within this challenge.
@@ -87,7 +87,7 @@ properties:
       properties:
         image:
           type: string
-          description: >
+          description: >-
             The image tag for this container. If 'build' is not specified, the
             container will be pulled (e.g. containers for services like a
             database found on dockerhub). If 'build' is specified, this
@@ -96,24 +96,24 @@ properties:
         build:
           oneOf:
           - type: string
-            description: >
+            description: >-
               Path to the directory containing a Dockerfile to build for this container.
           - type: object
-            description: >
+            description: >-
               Complex build configuration object roughly mirroring that of
               docker-compose.yml.
             properties:
               context:
                 type: string
-                description: >
+                description: >-
                   Path to the build context
               dockerfile:
                 type: string
-                description: >
+                description: >-
                   Path to the Dockerfile within the build context
               args:
                 type: object
-                description: >
+                description: >-
                   Build arguments to be passed to the build. Please write
                   numbers as strings to avoid ambiguity from number formatting
                 additionalProperties:
@@ -122,14 +122,14 @@ properties:
             - context
         environment:
           type: object
-          description: >
+          description: >-
             Environment variables to set within the container. Please format all
             values as strings. Keys without values are not supported.
           additionalProperties:
             type: string
         ports:
           type: array
-          description: >
+          description: >-
             Port numbers (as integers) on this container to expose to other
             containers within this challenge. If a port is supposed to be
             exposed to the Internet, make sure it is specified here, and add it
@@ -149,7 +149,7 @@ properties:
         - build
   expose:
     type: object
-    description: >
+    description: >-
       Ports on containers to expose to the Internet. Keys correspond to the key
       of the container that the rule is targeting.
     additionalProperties:
@@ -159,15 +159,15 @@ properties:
         properties:
           target:
             type: integer
-            description: >
+            description: >-
               The port number on the container this rule targets.
           tcp:
             type: integer
-            description: >
+            description: >-
               The external port number to expose, treating this port as raw TCP.
           http:
             type: string
-            description: >
+            description: >-
               The hostname to expose, treating this port as HTTP.
         # Exactly one of (http, tcp) allowed
         not:
