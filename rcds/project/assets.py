@@ -155,7 +155,6 @@ class AssetManagerTransaction:
         self._is_active = False
         self._asset_manager_context._is_transaction_active = False
         files_to_delete = set(self._asset_manager_context.ls())
-        print(files_to_delete)
         for name, file_entry in self._files.items():
             fpath = self._asset_manager_context._get(name)
             try:
@@ -168,7 +167,6 @@ class AssetManagerTransaction:
                     continue
             self._create(fpath, file_entry)
             self._asset_manager_context._add(name, force=True)
-        print(files_to_delete)
         for name in files_to_delete:
             fpath = self._asset_manager_context.get(name)
             fpath.unlink()
