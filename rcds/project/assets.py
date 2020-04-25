@@ -171,6 +171,7 @@ class AssetManagerTransaction:
             fpath = self._asset_manager_context.get(name)
             fpath.unlink()
             self._asset_manager_context._rm(name)
+        self._asset_manager_context.sync(check=True)
 
 
 class AssetManagerContext:
@@ -256,7 +257,7 @@ class AssetManagerContext:
                     shutil.rmtree(extra)
                 else:
                     extra.unlink()
-            for missing in self._files - disk:
+            for missing in files - disk:
                 raise RuntimeError(f"Cache item missing: '{str(missing)}'")
         with self._manifest_file.open("w") as fd:
             json.dump({"files": sorted(self._files)}, fd)

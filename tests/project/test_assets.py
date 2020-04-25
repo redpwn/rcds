@@ -60,11 +60,13 @@ def test_create_from_disk(datadir: Path, am_fn: assets.AssetManager) -> None:
     transaction = ctx.transaction()
     transaction.add_file("file1", file1)
     transaction.commit()
-    assert "file1" in ctx.ls()
+    assert set(ctx.ls()) == {"file1"}
     asset_f1 = ctx.get("file1")
     assert asset_f1.exists()
     assert asset_f1.is_symlink()
     assert asset_f1.resolve() == file1.resolve()
+    ctx2 = asset_manager.create_context("challenge")
+    assert set(ctx2.ls()) == {"file1"}
 
 
 def test_create_from_io(am_fn: assets.AssetManager) -> None:
@@ -74,10 +76,12 @@ def test_create_from_io(am_fn: assets.AssetManager) -> None:
     transaction = ctx.transaction()
     transaction.add("file", time.time(), io.BytesIO(contents))
     transaction.commit()
-    assert "file" in ctx.ls()
+    assert set(ctx.ls()) == {"file"}
     asset_file = ctx.get("file")
     with asset_file.open("rb") as fd:
         assert fd.read() == contents
+    ctx2 = asset_manager.create_context("challenge")
+    assert set(ctx2.ls()) == {"file"}
 
 
 def test_create_from_bytes(am_fn: assets.AssetManager) -> None:
@@ -87,10 +91,12 @@ def test_create_from_bytes(am_fn: assets.AssetManager) -> None:
     transaction = ctx.transaction()
     transaction.add("file", time.time(), contents)
     transaction.commit()
-    assert "file" in ctx.ls()
+    assert set(ctx.ls()) == {"file"}
     asset_file = ctx.get("file")
     with asset_file.open("rb") as fd:
         assert fd.read() == contents
+    ctx2 = asset_manager.create_context("challenge")
+    assert set(ctx2.ls()) == {"file"}
 
 
 def test_create_from_thunk(am_fn: assets.AssetManager) -> None:
@@ -100,10 +106,12 @@ def test_create_from_thunk(am_fn: assets.AssetManager) -> None:
     transaction = ctx.transaction()
     transaction.add("file", time.time(), lambda: contents)
     transaction.commit()
-    assert "file" in ctx.ls()
+    assert set(ctx.ls()) == {"file"}
     asset_file = ctx.get("file")
     with asset_file.open("rb") as fd:
         assert fd.read() == contents
+    ctx2 = asset_manager.create_context("challenge")
+    assert set(ctx2.ls()) == {"file"}
 
 
 def test_create_from_multiple_literals(am_fn: assets.AssetManager) -> None:
@@ -120,6 +128,8 @@ def test_create_from_multiple_literals(am_fn: assets.AssetManager) -> None:
         assert fd.read() == contents1
     with ctx.get("file2").open("rb") as fd:
         assert fd.read() == contents2
+    ctx2 = asset_manager.create_context("challenge")
+    assert set(ctx2.ls()) == {"file1", "file2"}
 
 
 def test_transaction_clear(datadir: Path, am_fn: assets.AssetManager) -> None:
@@ -131,9 +141,9 @@ def test_transaction_clear(datadir: Path, am_fn: assets.AssetManager) -> None:
     transaction = ctx.transaction()
     transaction.add_file("file2", datadir / "file2")
     transaction.commit()
-    contents = set(ctx.ls())
-    assert "file1" not in contents
-    assert "file2" in contents
+    assert set(ctx.ls()) == {"file2"}
+    ctx2 = asset_manager.create_context("challenge")
+    assert set(ctx2.ls()) == {"file2"}
 
 
 def test_updates_when_newer(am_fn: assets.AssetManager) -> None:
@@ -183,6 +193,8 @@ def test_context_clear(datadir: Path, am_fn: assets.AssetManager) -> None:
     assert len(list(ctx.ls())) != 0
     ctx.clear()
     assert len(list(ctx.ls())) == 0
+    ctx2 = asset_manager.create_context("challenge")
+    assert len(list(ctx2.ls())) == 0
 
 
 def test_disallow_concurrent_transaction(am_fn: assets.AssetManager) -> None:
@@ -271,6 +283,42 @@ def test_disallow_directories_files_add(
     with pytest.raises(ValueError) as errinfo:
         transaction.commit()
     assert "Provided file does not exist: " in str(errinfo.value)
+
+
+class TestCacheErrorRecovery:
+    def test_deleted_asset(self, datadir: Path, am_fn: assets.AssetManager) -> None:
+        asset_manager = am_fn
+        ctx = asset_manager.create_context("challenge")
+        transaction = ctx.transaction()
+        transaction.add_file("file1", datadir / "file1")
+        transaction.commit()
+        (ctx._root / "files" / "file1").unlink()
+        with pytest.raises(RuntimeError) as errinfo:
+            ctx.sync(check=True)
+        assert "Cache item missing: " in str(errinfo.value)
+
+    def test_extra_file(self, datadir: Path, am_fn: assets.AssetManager) -> None:
+        asset_manager = am_fn
+        ctx = asset_manager.create_context("challenge")
+        file1 = ctx._root / "files" / "file1"
+        with file1.open("w") as fd:
+            fd.write("abcd")
+        with pytest.warns(RuntimeWarning) as record:
+            ctx.sync(check=True)
+        assert len(record) == 1
+        assert "Unexpected item found in cache: " in str(record[0].message.args[0])
+        assert not file1.exists()
+
+    def test_extra_dir(self, datadir: Path, am_fn: assets.AssetManager) -> None:
+        asset_manager = am_fn
+        ctx = asset_manager.create_context("challenge")
+        dir1 = ctx._root / "files" / "dir1"
+        dir1.mkdir()
+        with pytest.warns(RuntimeWarning) as record:
+            ctx.sync(check=True)
+        assert len(record) == 1
+        assert "Unexpected item found in cache: " in str(record[0].message.args[0])
+        assert not dir1.exists()
 
 
 class TestInternals:
