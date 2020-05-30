@@ -128,6 +128,7 @@ class BuildableContainer(Container):
             pull=True,
             rm=True,
         )
+        self.project.docker_client.images.push(self.image, tag=self.content_hash)
 
     def get_full_tag(self) -> str:
         return f"{self.image}:{self.content_hash}"
@@ -143,11 +144,6 @@ class BuildableContainer(Container):
             self.project.docker_client.images.get(self.get_full_tag())
             return True
         except docker.errors.ImageNotFound:
-            pass  # continue with trying to pull
-        try:
-            self.project.docker_client.images.pull(self.get_full_tag())
-            return True
-        except docker.errors.NotFound:
             pass  # continue
         return False
 
