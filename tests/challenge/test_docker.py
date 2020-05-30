@@ -57,6 +57,10 @@ class TestContainerManager:
         simple_container = cast(docker.BuildableContainer, simple_container)
         assert simple_container.get_full_tag().startswith("registry.com/ns/")
         assert "simple" in simple_container.get_full_tag()
+        assert chall.config["containers"]["simple"]["image"].startswith(
+            "registry.com/ns/"
+        )
+        assert "simple" in chall.config["containers"]["simple"]["image"]
         assert simple_container.dockerfile == "Dockerfile"
         assert simple_container.buildargs == dict()
 
@@ -67,6 +71,10 @@ class TestContainerManager:
         complex_container = cast(docker.BuildableContainer, complex_container)
         assert complex_container.get_full_tag().startswith("registry.com/ns/")
         assert "complex" in complex_container.get_full_tag()
+        assert chall.config["containers"]["complex"]["image"].startswith(
+            "registry.com/ns/"
+        )
+        assert "complex" in chall.config["containers"]["complex"]["image"]
         assert complex_container.dockerfile == "Dockerfile.alternate"
         assert complex_container.buildargs["foo"] == "bar"
 

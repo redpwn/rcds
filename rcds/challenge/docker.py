@@ -185,6 +185,7 @@ class ContainerManager:
             self.containers[name] = container_constructor(
                 container_manager=self, name=name
             )
+            container_config["image"] = self.containers[name].get_full_tag()
 
     def get_docker_image(self, container: Container) -> str:
         image_template = self.project.jinja_env.from_string(
