@@ -9,7 +9,7 @@ from rcds.challenge import config
 def test_datadir(request, datadir):
     fn_name = request.function.__name__
     assert fn_name[:5] == "test_"
-    return datadir / fn_name[5:]
+    return datadir / fn_name[5:].replace("_", "-")
 
 
 @pytest.fixture
