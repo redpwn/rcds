@@ -115,6 +115,18 @@ def test_warn_multiline_flag(configloader, test_datadir) -> None:
     )
 
 
+def test_default_category(configloader, test_datadir) -> None:
+    cfg = configloader.load_config(test_datadir / "chall" / "challenge.yml")
+    assert cfg is not None
+    assert cfg["category"] == "default-category"
+
+
+def test_no_default_category(configloader, test_datadir) -> None:
+    cfg = configloader.load_config(test_datadir / "challenge.yml")
+    assert cfg is not None
+    assert "category" not in cfg
+
+
 def test_load_valid(configloader: config.ConfigLoader, datadir) -> None:
     cfg = configloader.load_config(datadir / "valid/challenge.yml")
     assert cfg is not None

@@ -30,6 +30,12 @@ properties:
     description: >-
       Description of the challenge. It is in Markdown format and will be
       processed with Jinja.
+  category:
+    type: string
+    description: >-
+      Category of the challenge. If not provided, defaults to the parent
+      directory of the challenge (e.g. if this file is located at
+      /pwn/chall1/challenge.yaml, the category will default to 'pwn').
   flag:
     description: >-
       The flag for the challenge.

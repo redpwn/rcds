@@ -56,9 +56,14 @@ class ConfigLoader:
             always be last.
         """
         root = config_file.parent
+        relative_path = root.resolve().relative_to(self.project.root.resolve())
         config = load_any(config_file)
 
         config.setdefault("id", root.name)  # derive id from parent directory name
+
+        if len(relative_path.parts) >= 2:
+            # default category name is the parent of the challenge directory
+            config.setdefault("category", relative_path.parts[-2])
 
         schema_errors: Iterable[errors.SchemaValidationError] = (
             errors.SchemaValidationError(str(e), e)
