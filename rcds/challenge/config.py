@@ -1,21 +1,19 @@
+from copy import deepcopy
 from itertools import tee
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Tuple, Union, cast
 from warnings import warn
 
-from jsonschema import Draft7Validator  # type: ignore
-
 from rcds import errors
 
 from ..util import load_any
+from ..util.jsonschema import DefaultValidatingDraft7Validator
 
 if TYPE_CHECKING:  # pragma: no cover
     from rcds import Project
 
 
-config_schema_validator = Draft7Validator(
-    schema=load_any(Path(__file__).parent / "challenge.schema.yaml")
-)
+config_schema = load_any(Path(__file__).parent / "challenge.schema.yaml")
 
 
 class TargetNotFoundError(errors.ValidationError):
@@ -42,6 +40,16 @@ class ConfigLoader:
         :param rcds.Project project: project context to use
         """
         self.project = project
+        self.config_schema = deepcopy(config_schema)
+        for backend in [
+            self.project.container_backend,
+            self.project.scoreboard_backend,
+        ]:
+            if backend is not None:
+                backend.patch_challenge_schema(self.config_schema)
+        self.config_schema_validator = DefaultValidatingDraft7Validator(
+            schema=self.config_schema
+        )
 
     def parse_config(
         self, config_file: Path
@@ -67,7 +75,7 @@ class ConfigLoader:
 
         schema_errors: Iterable[errors.SchemaValidationError] = (
             errors.SchemaValidationError(str(e), e)
-            for e in config_schema_validator.iter_errors(config)
+            for e in self.config_schema_validator.iter_errors(config)
         )
         # Make a duplicate to check whethere there are errors returned
         schema_errors, schema_errors_dup = tee(schema_errors)

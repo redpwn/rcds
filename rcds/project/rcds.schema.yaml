@@ -32,3 +32,20 @@ properties:
         - template
     required:
     - image
+  backends:
+    type: array
+    description: >-
+      Deployment backends to use. Backends earlier in the array have higher
+      precedence.
+    items:
+      type: object
+      properties:
+        resolve:
+          type: string
+          description: >-
+            The name of this backend (either the name of one of rCDS's internal
+            backends, or its fully qualified module name).
+        options:
+          type: object
+          description: >-
+            Options for this backend.
