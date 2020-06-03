@@ -8,3 +8,10 @@ properties:
       Template for the namespace to create for each challenge. Evaluated using
       Jinja. The challenge's config is available under the variable `challenge`
     default: "rcds-{{ challenge.id }}"
+  domain:
+    type: string
+    description: >-
+      Domain that the cluster is accessible at. NodePorts must be accessible on
+      this domain, and ingresses will be created on subdomains.
+required:
+  - domain

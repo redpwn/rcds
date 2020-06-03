@@ -23,6 +23,7 @@ class ContainerBackend(rcds.backend.BackendContainerRuntime):
     _project: rcds.Project
     _options: Dict[str, Any]
     _namespace_template: Template
+    _jinja_env: Environment
 
     def __init__(self, project: rcds.Project, options: Dict[str, Any]):
         self._project = project
@@ -33,6 +34,8 @@ class ContainerBackend(rcds.backend.BackendContainerRuntime):
             raise ValueError("Invalid options")
 
         self._namespace_template = Template(self._options["namespace-template"])
+        self._jinja_env = jinja_env.overlay()
+        self._jinja_env.globals["options"] = self._options
 
         config.load_kube_config()
 
@@ -65,7 +68,7 @@ class ContainerBackend(rcds.backend.BackendContainerRuntime):
             manifest = env.get_template(template).render().strip()
             manifests += filter(lambda x: x is not None, yaml.safe_load_all(manifest))
 
-        challenge_env: Environment = jinja_env.overlay()
+        challenge_env: Environment = self._jinja_env.overlay()
         challenge_env.globals["challenge"] = challenge.config
         challenge_env.globals["namespace"] = self.get_namespace_for_challenge(challenge)
 
@@ -74,6 +77,11 @@ class ContainerBackend(rcds.backend.BackendContainerRuntime):
 
         for container_name, container_config in challenge.config["containers"].items():
             expose_config = challenge.config["expose"].get(container_name, None)
+
+            if expose_config is not None:
+                for expose_port in expose_config:
+                    if "http" in expose_port:
+                        expose_port["http"] += "." + self._options["domain"]
 
             container_env: Environment = challenge_env.overlay()
             container_env.globals["container"] = {
