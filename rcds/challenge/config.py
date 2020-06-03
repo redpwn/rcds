@@ -100,7 +100,10 @@ class ConfigLoader:
                                     )
             if "provide" in config:
                 for f in config["provide"]:
-                    f = Path(f)
+                    if isinstance(f, str):
+                        f = Path(f)
+                    else:
+                        f = Path(f["file"])
                     if not (root / f).is_file():
                         yield TargetFileNotFoundError(
                             f'`provide` references file "{str(f)}" which does not '
