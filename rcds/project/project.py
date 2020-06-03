@@ -8,6 +8,7 @@ from rcds.util import SUPPORTED_EXTENSIONS, find_files
 
 from ..challenge import Challenge, ChallengeLoader
 from . import config
+from .assets import AssetManager
 
 
 class Project:
@@ -19,6 +20,8 @@ class Project:
     config: dict
     challenges: Dict[Path, Challenge]
     challenge_loader: ChallengeLoader
+
+    asset_manager: AssetManager
 
     jinja_env: Environment
     docker_client: Any
@@ -39,6 +42,7 @@ class Project:
         self.root = root
         self.config = config.load_config(cfg_file)
         self.challenge_loader = ChallengeLoader(self)
+        self.asset_manager = AssetManager(self)
         self.jinja_env = Environment(autoescape=False)
         if docker_client is not None:
             self.docker_client = docker_client

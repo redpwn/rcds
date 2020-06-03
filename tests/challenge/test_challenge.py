@@ -62,3 +62,18 @@ def test_render_description(project: Project, loader: ChallengeLoader) -> None:
             """
         ).strip()
     )
+
+
+def test_static_assets(project: Project, loader: ChallengeLoader) -> None:
+    chall = loader.load(project.root / "static-assets")
+    chall.create_transaction().commit()
+    ctx = project.asset_manager.create_context("static-assets")
+    assert set(ctx.ls()) == {"file1.txt", "file3.txt"}
+    assert (
+        ctx.get("file1.txt").read_text()
+        == (project.root / "static-assets" / "file1.txt").read_text()
+    )
+    assert (
+        ctx.get("file3.txt").read_text()
+        == (project.root / "static-assets" / "file2.txt").read_text()
+    )

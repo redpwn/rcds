@@ -1,0 +1,7 @@
+name: name
+description: description
+
+provide:
+- ./file1.txt
+- file: ./file2.txt
+  as: file3.txt
