@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict
 
-from ..util import SUPPORTED_EXTENSIONS, find_files
+from ..util import SUPPORTED_EXTENSIONS, deep_merge, find_files
 from .config import ConfigLoader
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -51,14 +51,24 @@ class Challenge:
     project: "Project"
     root: Path
     config: Dict[str, Any]
+    context: Dict[str, Any]  # overrides to Jinja context
 
     def __init__(self, project: "Project", root: Path, config: dict):
         self.project = project
         self.root = root
         self.config = config
+        self.context = dict()
 
     def get_relative_path(self) -> Path:
         """
         Utiity function to get this challenge's path relative to the project root
         """
         return self.root.relative_to(self.project.root)
+
+    def render_description(self) -> str:
+        """
+        Render the challenge's description template to a string
+        """
+        return self.project.jinja_env.from_string(self.config["description"]).render(
+            deep_merge(dict(), {"challenge": self.config}, self.context)
+        )

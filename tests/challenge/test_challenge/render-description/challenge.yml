@@ -1,0 +1,6 @@
+name: A fancy challenge
+description: |-
+  # {{ challenge.name }} ({{ challenge.id }})
+  **Written by {{ challenge.author }}**
+  {{ foo }}
+author: Robert

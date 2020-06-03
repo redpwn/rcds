@@ -1,4 +1,5 @@
 from pathlib import Path
+from textwrap import dedent
 
 import pytest  # type: ignore
 
@@ -46,3 +47,18 @@ def test_load_nonexistent_challenge(project: Project, loader: ChallengeLoader) -
 def test_load_bad_dir_name(project: Project, loader: ChallengeLoader) -> None:
     with pytest.raises(errors.SchemaValidationError):
         loader.load(project.root / "bad#dir")
+
+
+def test_render_description(project: Project, loader: ChallengeLoader) -> None:
+    chall = loader.load(project.root / "render-description")
+    chall.context["foo"] = "bar"
+    assert (
+        chall.render_description()
+        == dedent(
+            """
+            # A fancy challenge (render-description)
+            **Written by Robert**
+            bar
+            """
+        ).strip()
+    )
