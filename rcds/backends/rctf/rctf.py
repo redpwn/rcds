@@ -40,7 +40,7 @@ class RCTFAdminV1:
         self.assertResponseKind(r, "goodChallengeUpdate")
 
     def delete_challenge(self, chall_id: str) -> None:
-        r = self.session.delete("challs/" + quote(chall_id))
+        r = self.session.delete("challs/" + quote(chall_id)).json()
         self.assertResponseKind(r, "goodChallengeDelete")
 
     def create_upload(self, uploads: Dict[str, bytes]) -> Dict[str, str]:
