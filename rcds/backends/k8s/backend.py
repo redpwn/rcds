@@ -40,12 +40,15 @@ class ContainerBackend(rcds.backend.BackendContainerRuntime):
         config.load_kube_config()
 
     def commit(self) -> bool:
+        deployed_challs = filter(
+            lambda c: c.config["deployed"], self._project.challenges.values()
+        )
         # TODO: auto assignment of expose params
         manifests = list(
             itertools.chain.from_iterable(
                 map(
                     lambda chall: self.gen_manifests_for_challenge(chall),
-                    self._project.challenges.values(),
+                    deployed_challs,
                 )
             )
         )

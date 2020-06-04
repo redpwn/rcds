@@ -42,6 +42,8 @@ class ScoreboardBackend(rcds.backend.BackendScoreboard):
             c["id"] for c in self._adminv1.list_challenges() if c["managedBy"] == "rcds"
         )
         for challenge in self._project.challenges.values():
+            if not challenge.config["visible"]:
+                continue
             try:
                 remote_challenges.remove(challenge.config["id"])
             except KeyError:

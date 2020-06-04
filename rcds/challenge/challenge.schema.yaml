@@ -67,6 +67,12 @@ properties:
       scoreboard backend being used.
     minimum: 0
 
+  visible:
+    type: boolean
+    description: >-
+      Whether or not this challenge should be shown on the scoreboard.
+    default: true
+
   # Static assets
   provide:
     type: array
@@ -92,6 +98,11 @@ properties:
         - as
 
   # Runtime (containers)
+  deployed:
+    type: boolean
+    description: >-
+      Whether or not this challenge's containers should be deployed
+    default: true
   containers:
     type: object
     description: >-
