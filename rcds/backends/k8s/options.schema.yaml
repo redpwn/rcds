@@ -1,0 +1,17 @@
+$schema: http://json-schema.org/draft-07/schema#
+$id: http://rcds.redpwn.com/schemas/backends/k8s/options.yaml
+type: object
+properties:
+  namespace-template:
+    type: string
+    description: >-
+      Template for the namespace to create for each challenge. Evaluated using
+      Jinja. The challenge's config is available under the variable `challenge`
+    default: "rcds-{{ challenge.id }}"
+  domain:
+    type: string
+    description: >-
+      Domain that the cluster is accessible at. NodePorts must be accessible on
+      this domain, and ingresses will be created on subdomains.
+required:
+  - domain

@@ -6,6 +6,7 @@ from jinja2 import Environment
 
 from rcds.util import SUPPORTED_EXTENSIONS, find_files
 
+from ..backend import BackendContainerRuntime, BackendScoreboard, load_backend_module
 from ..challenge import Challenge, ChallengeLoader
 from . import config
 from .assets import AssetManager
@@ -22,6 +23,9 @@ class Project:
     challenge_loader: ChallengeLoader
 
     asset_manager: AssetManager
+
+    container_backend: Optional[BackendContainerRuntime] = None
+    scoreboard_backend: Optional[BackendScoreboard] = None
 
     jinja_env: Environment
     docker_client: Any
@@ -60,3 +64,17 @@ class Project:
 
     def get_challenge(self, relPath: Path) -> Challenge:
         return self.challenges[relPath]
+
+    def load_backends(self) -> None:
+        for backend_config in self.config["backends"]:
+            backend_info = load_backend_module(backend_config["resolve"])
+            if self.scoreboard_backend is None and backend_info.HAS_SCOREBOARD:
+                self.scoreboard_backend = backend_info.get_scoreboard(
+                    self, backend_config["options"]
+                )
+            if self.container_backend is None and backend_info.HAS_CONTAINER_RUNTIME:
+                self.container_backend = backend_info.get_container_runtime(
+                    self, backend_config["options"]
+                )
+        # TODO: maybe don't reinitialize here?
+        self.challenge_loader = ChallengeLoader(self)
