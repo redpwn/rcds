@@ -42,6 +42,7 @@ class Project:
         self.root = root
         self.config = config.load_config(cfg_file)
         self.challenge_loader = ChallengeLoader(self)
+        self.challenges = dict()
         self.asset_manager = AssetManager(self)
         self.jinja_env = Environment(autoescape=False)
         if docker_client is not None:

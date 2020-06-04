@@ -54,7 +54,7 @@ class Challenge:
     config: Dict[str, Any]
     context: Dict[str, Any]  # overrides to Jinja context
     _asset_manager_context: "AssetManagerContext"
-    _asset_sources: List[Callable[["AssetManagerTransaction"], None]] = []
+    _asset_sources: List[Callable[["AssetManagerTransaction"], None]]
 
     def __init__(self, project: "Project", root: Path, config: dict):
         self.project = project
@@ -64,6 +64,7 @@ class Challenge:
         self._asset_manager_context = self.project.asset_manager.create_context(
             self.config["id"]
         )
+        self._asset_sources = []
 
         self.register_asset_source(self._add_static_assets)
 
