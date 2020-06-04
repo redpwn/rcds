@@ -96,6 +96,9 @@ class Challenge:
             do_add(transaction)
         return transaction
 
+    def get_asset_manager_context(self) -> "AssetManagerContext":
+        return self._asset_manager_context
+
     def get_relative_path(self) -> Path:
         """
         Utiity function to get this challenge's path relative to the project root
