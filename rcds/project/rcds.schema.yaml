@@ -49,3 +49,10 @@ properties:
           type: object
           description: >-
             Options for this backend.
+          default: {}
+        required:
+        - resolve
+        - options
+    default: []
+required:
+- backends

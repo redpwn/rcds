@@ -67,14 +67,13 @@ class Project:
     def load_backends(self) -> None:
         for backend_config in self.config["backends"]:
             backend_info = load_backend_module(backend_config["resolve"])
-            if self.scoreboard_backend is not None and backend_info.HAS_SCOREBOARD:
+            if self.scoreboard_backend is None and backend_info.HAS_SCOREBOARD:
                 self.scoreboard_backend = backend_info.get_scoreboard(
                     self, backend_config["options"]
                 )
-            if (
-                self.container_backend is not None
-                and backend_info.HAS_CONTAINER_RUNTIME
-            ):
+            if self.container_backend is None and backend_info.HAS_CONTAINER_RUNTIME:
                 self.container_backend = backend_info.get_container_runtime(
                     self, backend_config["options"]
                 )
+        # TODO: maybe don't reinitialize here?
+        self.challenge_loader = ChallengeLoader(self)
