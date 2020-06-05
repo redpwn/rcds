@@ -34,4 +34,8 @@ spec:
               value: {{ value | quote }}
           {% endfor %}
           {% endif %}
+          {% if container.config.resources %}
+          resources:
+            {{ container.config.resources | yaml(12) }}
+          {% endif %}
       automountServiceAccountToken: false
