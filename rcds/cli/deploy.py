@@ -22,13 +22,13 @@ def deploy() -> None:
     project.load_backends()
     click.echo("Loading challenges")
     project.load_all_challenges()
-    for challenge_name, challenge in project.challenges.items():
+    for challenge in project.challenges.values():
         cm = rcds.challenge.docker.ContainerManager(challenge)
         for container_name, container in cm.containers.items():
             if not container.is_built():
                 click.echo(
-                    f"{challenge_name}: building container {container_name}"
-                    + " ({container.get_full_tag()})"
+                    f"{challenge.config['id']}: building container {container_name}"
+                    f" ({container.get_full_tag()})"
                 )
                 container.build()
         challenge.create_transaction().commit()
