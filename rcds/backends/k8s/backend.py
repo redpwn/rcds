@@ -79,12 +79,16 @@ class ContainerBackend(rcds.backend.BackendContainerRuntime):
         render_and_append(challenge_env, "network-policy.yaml")
 
         for container_name, container_config in challenge.config["containers"].items():
-            expose_config = challenge.config["expose"].get(container_name, None)
+            expose_config = challenge.config.get("expose", dict()).get(
+                container_name, None
+            )
 
             if expose_config is not None:
                 for expose_port in expose_config:
                     if "http" in expose_port:
                         expose_port["http"] += "." + self._options["domain"]
+                    if "tcp" in expose_port:
+                        expose_port["host"] = self._options["domain"]
 
             container_env: Environment = challenge_env.overlay()
             container_env.globals["container"] = {
