@@ -141,9 +141,9 @@ class BuildableContainer(Container):
         :returns: Whether or not the image was found
         """
         try:
-            self.project.docker_client.images.get(self.get_full_tag())
+            self.project.docker_client.images.get_registry_data(self.get_full_tag())
             return True
-        except docker.errors.ImageNotFound:
+        except docker.errors.NotFound:
             pass  # continue
         return False
 
