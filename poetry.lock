@@ -480,7 +480,7 @@ marker = "python_version >= \"3.6.1\" and python_version < \"4.0.0\""
 name = "pre-commit"
 optional = false
 python-versions = ">=3.6.1"
-version = "2.4.0"
+version = "2.5.0"
 
 [package.dependencies]
 cfgv = ">=2.0.0"
@@ -943,7 +943,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "699add27499ebe5657c18f9c8dea266d6efc02c8c604a1a780c39054516c573a"
+content-hash = "943e31cbc40632d35093383cf3d54cea87efea4f146a1d5cab984797d139eea6"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -1178,8 +1178,8 @@ pluggy = [
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
 ]
 pre-commit = [
-    {file = "pre_commit-2.4.0-py2.py3-none-any.whl", hash = "sha256:5559e09afcac7808933951ffaf4ff9aac524f31efbc3f24d021540b6c579813c"},
-    {file = "pre_commit-2.4.0.tar.gz", hash = "sha256:703e2e34cbe0eedb0d319eff9f7b83e2022bb5a3ab5289a6a8841441076514d0"},
+    {file = "pre_commit-2.5.0-py2.py3-none-any.whl", hash = "sha256:e02328d2a61dc6e0b20a40b6eecda2655b998fed7f561cac5993cbd8bdb3fbde"},
+    {file = "pre_commit-2.5.0.tar.gz", hash = "sha256:3f16110d2e5136de8bae11a32e496cc193a68cf02bcf11dba61d8e6aff06efc5"},
 ]
 py = [
     {file = "py-1.8.1-py2.py3-none-any.whl", hash = "sha256:c20fdd83a5dbc0af9efd622bee9a5564e278f6380fffcacc43ba6f43db2813b0"},
