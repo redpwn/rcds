@@ -54,5 +54,15 @@ properties:
         - resolve
         - options
     default: []
+  defaults:
+    type: object
+    description: >-
+      Default options for challenges. Values for array / mapping keys such as
+      `expose` and `containers` will be applied to each individual item within
+      that key (on the level where a concrete schema is defined).
+    not:
+      anyOf:
+        # Properties that are not allowed to have defaults
+      - required: ['id']
 required:
 - backends

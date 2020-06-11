@@ -6,7 +6,7 @@ from warnings import warn
 
 from rcds import errors
 
-from ..util import load_any
+from ..util import deep_merge, load_any
 from ..util.jsonschema import DefaultValidatingDraft7Validator
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -51,6 +51,34 @@ class ConfigLoader:
             schema=self.config_schema
         )
 
+    def _apply_defaults(self, config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Apply project-level defaults
+        """
+        try:
+            root_defaults = deepcopy(self.project.config["defaults"])
+        except KeyError:
+            # No defaults present
+            return config
+
+        container_defaults = root_defaults.pop("containers", None)
+        expose_defaults = root_defaults.pop("expose", None)
+
+        # Array types with no sensible defaults - ignore them
+        root_defaults.pop("provide", None)
+
+        config = deep_merge(root_defaults, config)
+        if container_defaults is not None:
+            for container_name, container_config in config["containers"].items():
+                config["containers"][container_name] = deep_merge(
+                    dict(), container_defaults, container_config
+                )
+        if expose_defaults is not None:
+            for expose_config in config["expose"].values():
+                for i, expose_port in enumerate(expose_config):
+                    expose_config[i] = deep_merge(dict(), expose_defaults, expose_port)
+        return config
+
     def parse_config(
         self, config_file: Path
     ) -> Iterable[Union[errors.ValidationError, Dict[str, Any]]]:
@@ -68,6 +96,8 @@ class ConfigLoader:
         config = load_any(config_file)
 
         config.setdefault("id", root.name)  # derive id from parent directory name
+
+        config = self._apply_defaults(config)
 
         if len(relative_path.parts) >= 2:
             # default category name is the parent of the challenge directory

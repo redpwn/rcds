@@ -1,0 +1,22 @@
+name: challenge
+description: desc
+
+containers:
+  main:
+    image: gcr.io/google-samples/hello-app
+    ports: [80]
+  partial:
+    image: gcr.io/google-samples/hello-app
+    resources:
+      limits:
+        cpu: 20m
+    ports: [80]
+
+expose:
+  main:
+  - target: 80
+    tcp: 31525
+  partial:
+  - target: 80
+    tcp: 31546
+    foo: baz

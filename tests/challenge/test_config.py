@@ -13,9 +13,13 @@ def test_datadir(request, datadir):
     return datadir / fn_name[5:].replace("_", "-")
 
 
+@pytest.fixture(scope="function")
+def project(datadir):
+    return Project(datadir)
+
+
 @pytest.fixture
-def configloader(datadir):
-    project = Project(datadir)
+def configloader(project):
     return config.ConfigLoader(project)
 
 
@@ -136,3 +140,43 @@ def test_load_valid(configloader: config.ConfigLoader, datadir) -> None:
 def test_load_invalid(configloader: config.ConfigLoader, datadir) -> None:
     with pytest.raises(rcds.errors.ValidationError):
         configloader.load_config(datadir / "nonexistent-flag-file" / "challenge.yml")
+
+
+class TestProjectDefaults:
+    @staticmethod
+    def test_omnibus(project: Project, datadir) -> None:
+        project.config["defaults"] = {
+            "containers": {
+                "resources": {
+                    "limits": {"cpu": "10m", "memory": "10Mi"},
+                    "requests": {"cpu": "10m", "memory": "10Mi"},
+                }
+            },
+            "expose": {"foo": "bar"},
+            "value": 100,
+        }
+        configloader = config.ConfigLoader(project)
+        cfg1 = configloader.load_config(datadir / "defaults" / "1" / "challenge.yml")
+        assert cfg1["value"] == 100
+        assert cfg1["containers"]["main"] == {
+            "image": "gcr.io/google-samples/hello-app",
+            "resources": {
+                "limits": {"cpu": "10m", "memory": "10Mi"},
+                "requests": {"cpu": "10m", "memory": "10Mi"},
+            },
+            "ports": [80],
+        }
+        assert cfg1["containers"]["partial"] == {
+            "image": "gcr.io/google-samples/hello-app",
+            "resources": {
+                "limits": {"cpu": "20m", "memory": "10Mi"},
+                "requests": {"cpu": "10m", "memory": "10Mi"},
+            },
+            "ports": [80],
+        }
+        assert cfg1["expose"]["main"][0] == {"target": 80, "tcp": 31525, "foo": "bar"}
+        assert cfg1["expose"]["partial"][0] == {
+            "target": 80,
+            "tcp": 31546,
+            "foo": "baz",
+        }
