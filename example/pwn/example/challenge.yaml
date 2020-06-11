@@ -1,0 +1,21 @@
+name: example
+description: description
+flag: flag{example_flag}
+points: 500
+
+containers:
+  main:
+    build: .
+    resources:
+      requests:
+        cpu: 0.1
+        memory: 100Mi
+      limits:
+        cpu: 0.1
+        memory: 100Mi
+    ports:
+    - 9999
+expose:
+  main:
+  - target: 9999
+    tcp: 31010

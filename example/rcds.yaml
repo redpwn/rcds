@@ -1,0 +1,8 @@
+docker:
+  image:
+    prefix: rcds-example
+
+backends:
+- resolve: k8s
+  options:
+    domain: challs.example.com

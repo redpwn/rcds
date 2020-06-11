@@ -1,0 +1,30 @@
+name: Database challenge
+author: author
+description: |-
+  Challenge with a database
+
+flag: flag{l33t_t3xt_h3r3}
+
+provide:
+- ./chall/index.js
+
+containers:
+  main:
+    build: chall
+    ports: [3000]
+    environment:
+      PGHOST: db
+      PGUSER: postgres
+      PGPASSWORD: unguessable_password
+      PGPORT: "5432"
+      PGDATABASE: database  # note - this may requiree manual setup to create
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: unguessable_password
+    ports: [5432]
+
+expose:
+  main:
+  - target: 3000
+    http: with-database  # subdomain name
