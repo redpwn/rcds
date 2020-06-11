@@ -1,6 +1,7 @@
 import pytest  # type: ignore
 
 import rcds
+import rcds.errors
 from rcds import Project
 from rcds.challenge import config
 
@@ -128,10 +129,10 @@ def test_no_default_category(configloader, test_datadir) -> None:
 
 
 def test_load_valid(configloader: config.ConfigLoader, datadir) -> None:
-    cfg = configloader.load_config(datadir / "valid/challenge.yml")
+    cfg = configloader.load_config(datadir / "valid" / "challenge.yml")
     assert cfg is not None
 
 
 def test_load_invalid(configloader: config.ConfigLoader, datadir) -> None:
-    with pytest.raises(Exception):
-        configloader.load_config(datadir / "nonexistent_flag_file/challenge.yml")
+    with pytest.raises(rcds.errors.ValidationError):
+        configloader.load_config(datadir / "nonexistent-flag-file" / "challenge.yml")
