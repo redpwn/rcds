@@ -10,6 +10,9 @@ metadata:
     {{ helpers.container_labels() | indent(4) }}
 spec:
   type: {{ 'NodePort' if container.expose is not none and container.expose|selectattr("tcp", "defined")|first is defined else 'ClusterIP' }}
+  selector:
+    {{ helpers.common_labels() | indent(4) }}
+    {{ helpers.container_labels() | indent(4) }}
   ports:
   {% for port in container.config.ports %}
     - port: {{ port }}
