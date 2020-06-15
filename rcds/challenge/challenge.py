@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, List
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, cast
 
 from ..util import SUPPORTED_EXTENSIONS, deep_merge, find_files
 from .config import ConfigLoader
@@ -106,10 +106,42 @@ class Challenge:
         """
         return self.root.relative_to(self.project.root)
 
+    def get_context_shortcuts(self) -> Dict[str, Any]:
+        shortcuts: Dict[str, Any] = dict()
+
+        if (
+            "expose" in self.config
+            and len(self.config["expose"]) == 1
+            and len(next(iter(cast(Dict[str, list], self.config["expose"]).values())))
+            == 1
+        ):
+            # One container exposed; we can define expose shortcuts
+            expose_cfg = cast(
+                Dict[str, Any], next(iter(self.config["expose"].values()))[0]
+            )
+            shortcuts["host"] = expose_cfg.get("http", expose_cfg.get("host", None))
+            if "tcp" in expose_cfg:
+                shortcuts["port"] = expose_cfg["tcp"]
+                shortcuts["nc"] = f"nc {shortcuts['host']} {shortcuts['port']}"
+                shortcuts["url"] = (
+                    f"[{shortcuts['host']}:{shortcuts['port']}]"
+                    f"(https://{shortcuts['host']}:{shortcuts['port']})"
+                )
+            if "http" in expose_cfg:
+                shortcuts["url"] = f"[{shortcuts['host']}](https://{shortcuts['host']})"
+
+        return shortcuts
+
     def render_description(self) -> str:
         """
         Render the challenge's description template to a string
         """
+
         return self.project.jinja_env.from_string(self.config["description"]).render(
-            deep_merge(dict(), {"challenge": self.config}, self.context)
+            deep_merge(
+                dict(),
+                {"challenge": self.config},
+                self.get_context_shortcuts(),
+                self.context,
+            )
         )

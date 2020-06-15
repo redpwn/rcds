@@ -1,0 +1,12 @@
+name: name
+description: description
+
+containers:
+  nginx:
+    image: nginx
+    ports: [80]
+
+expose:
+  nginx:
+  - target: 80
+    tcp: 31582

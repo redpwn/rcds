@@ -1,3 +1,4 @@
+from copy import deepcopy
 from pathlib import Path
 from textwrap import dedent
 
@@ -77,3 +78,32 @@ def test_static_assets(project: Project, loader: ChallengeLoader) -> None:
         ctx.get("file3.txt").read_text()
         == (project.root / "static-assets" / "file2.txt").read_text()
     )
+
+
+class TestContextShortcuts:
+    @staticmethod
+    def test_tcp(project: Project, loader: ChallengeLoader) -> None:
+        chall = loader.load(project.root / "shortcuts-tcp")
+        expose_cfg = chall.config["expose"]["nginx"][0]
+        expose_cfg["host"] = "tcp.example.com"
+        expose_cfg_copy = deepcopy(expose_cfg)
+        shortcuts = chall.get_context_shortcuts()
+        assert shortcuts["host"] == expose_cfg_copy["host"]
+        assert shortcuts["port"] == expose_cfg_copy["tcp"]
+        assert shortcuts["url"] == (
+            f"[{expose_cfg_copy['host']}:{expose_cfg_copy['tcp']}]"
+            f"(https://{expose_cfg_copy['host']}:{expose_cfg_copy['tcp']})"
+        )
+        assert (
+            shortcuts["nc"] == f"nc {expose_cfg_copy['host']} {expose_cfg_copy['tcp']}"
+        )
+
+    @staticmethod
+    def test_http(project: Project, loader: ChallengeLoader) -> None:
+        chall = loader.load(project.root / "shortcuts-http")
+        expose_cfg_copy = deepcopy(chall.config["expose"]["nginx"][0])
+        shortcuts = chall.get_context_shortcuts()
+        assert shortcuts["host"] == expose_cfg_copy["http"]
+        assert shortcuts["url"] == (
+            f"[{expose_cfg_copy['http']}](https://{expose_cfg_copy['http']})"
+        )
