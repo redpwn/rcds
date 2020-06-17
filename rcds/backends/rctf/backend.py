@@ -37,6 +37,15 @@ class ScoreboardBackend(rcds.backend.BackendScoreboard):
         self._adminv1 = RCTFAdminV1(self._options["url"], self._options["token"])
 
     def patch_challenge_schema(self, schema: Dict[str, Any]) -> None:
+        # Disallow regex flags
+        flag_schema = next(
+            s for s in schema["properties"]["flag"]["oneOf"] if s["type"] == "object"
+        )
+        flag_schema["properties"].pop("regex")
+        flag_schema["oneOf"] = [
+            s for s in flag_schema["oneOf"] if s["required"][0] != "regex"
+        ]
+
         schema["required"] += ["author", "category"]
 
     def commit(self) -> bool:
