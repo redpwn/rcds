@@ -46,7 +46,9 @@ class ScoreboardBackend(rcds.backend.BackendScoreboard):
 
         # Begin actual commit
         remote_challenges: Set[str] = set(
-            c["id"] for c in self._adminv1.list_challenges() if c["managedBy"] == "rcds"
+            c["id"]
+            for c in self._adminv1.list_challenges()
+            if c.get("managedBy", None) == "rcds"
         )
         for challenge in self._project.challenges.values():
             if not challenge.config["visible"]:
