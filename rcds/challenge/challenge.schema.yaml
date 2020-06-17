@@ -243,12 +243,7 @@ properties:
             description: >-
               The hostname to expose, treating this port as HTTP.
         # Exactly one of (http, tcp) allowed
-        not:
-          anyOf:
-          - required:
-            - http
-            - tcp
-        anyOf:
+        oneOf:
           - required: [http]
           - required: [tcp]
     propertyNames:
