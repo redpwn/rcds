@@ -46,7 +46,14 @@ class ScoreboardBackend(rcds.backend.BackendScoreboard):
             s for s in flag_schema["oneOf"] if s["required"][0] != "regex"
         ]
 
-        schema["required"] += ["author", "category"]
+        # tiebreakEligible flag
+        schema["properties"]["tiebreakEligible"] = {
+            "type": "boolean",
+            "description": "Whether or not this challenge affects tiebreakers.",
+            "default": True,
+        }
+
+        schema["required"] += ["author", "category", "tiebreakEligible"]
 
     def commit(self) -> bool:
         # Validate challenges
@@ -87,7 +94,7 @@ class ScoreboardBackend(rcds.backend.BackendScoreboard):
     def commit_challenge(self, challenge: rcds.Challenge) -> None:
         chall_id = challenge.config["id"]
         rctf_challenge: Dict[str, Any] = {"managedBy": "rcds"}
-        for common_field in ["name", "author", "category", "flag"]:
+        for common_field in ["name", "author", "category", "flag", "tiebreakEligible"]:
             rctf_challenge[common_field] = challenge.config[common_field]
         rctf_challenge["description"] = challenge.render_description()
         # FIXME: allow for configuring points per challenge
