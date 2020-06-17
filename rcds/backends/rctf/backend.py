@@ -97,11 +97,18 @@ class ScoreboardBackend(rcds.backend.BackendScoreboard):
         for common_field in ["name", "author", "category", "flag", "tiebreakEligible"]:
             rctf_challenge[common_field] = challenge.config[common_field]
         rctf_challenge["description"] = challenge.render_description()
-        # FIXME: allow for configuring points per challenge
-        rctf_challenge["points"] = {
-            "min": self._options["scoring"]["minPoints"],
-            "max": self._options["scoring"]["maxPoints"],
-        }
+        if "value" in challenge.config:
+            # Static value
+            rctf_challenge["points"] = {
+                "min": challenge.config["value"],
+                "max": challenge.config["value"],
+            }
+        else:
+            # No value = dynamically scored
+            rctf_challenge["points"] = {
+                "min": self._options["scoring"]["minPoints"],
+                "max": self._options["scoring"]["maxPoints"],
+            }
 
         am_ctx = challenge.get_asset_manager_context()
         file_hashes: Dict[str, str] = dict()
