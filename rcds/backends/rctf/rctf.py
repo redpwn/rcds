@@ -48,6 +48,8 @@ class RCTFAdminV1:
         :param uploads: uploads {name: data}
         :return: urls {name: url}
         """
+        if len(uploads) == 0:
+            return {}
         payload = [
             {"name": name, "data": "data:;base64," + b64encode(data).decode()}
             for name, data in uploads.items()
