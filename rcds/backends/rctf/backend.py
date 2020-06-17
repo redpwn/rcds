@@ -1,3 +1,4 @@
+import os
 from hashlib import sha256
 from pathlib import Path
 from typing import Any, Dict, Set
@@ -22,6 +23,12 @@ class ScoreboardBackend(rcds.backend.BackendScoreboard):
     def __init__(self, project: rcds.Project, options: Dict[str, Any]):
         self._project = project
         self._options = options
+
+        for option_key in ["url", "token"]:
+            env_key = f"RCDS_RCTF_{option_key.upper()}"
+            self._options[option_key] = os.environ.get(
+                env_key, self._options.get(option_key, None)
+            )
 
         # FIXME: validate options better
         if not options_schema_validator.is_valid(self._options):
