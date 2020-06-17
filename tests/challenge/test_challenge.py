@@ -92,7 +92,7 @@ class TestContextShortcuts:
         assert shortcuts["port"] == expose_cfg_copy["tcp"]
         assert shortcuts["url"] == (
             f"[{expose_cfg_copy['host']}:{expose_cfg_copy['tcp']}]"
-            f"(https://{expose_cfg_copy['host']}:{expose_cfg_copy['tcp']})"
+            f"(http://{expose_cfg_copy['host']}:{expose_cfg_copy['tcp']})"
         )
         assert (
             shortcuts["nc"] == f"nc {expose_cfg_copy['host']} {expose_cfg_copy['tcp']}"

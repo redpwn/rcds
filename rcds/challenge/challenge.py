@@ -125,7 +125,7 @@ class Challenge:
                 shortcuts["nc"] = f"nc {shortcuts['host']} {shortcuts['port']}"
                 shortcuts["url"] = (
                     f"[{shortcuts['host']}:{shortcuts['port']}]"
-                    f"(https://{shortcuts['host']}:{shortcuts['port']})"
+                    f"(http://{shortcuts['host']}:{shortcuts['port']})"
                 )
             if "http" in expose_cfg:
                 shortcuts["url"] = f"[{shortcuts['host']}](https://{shortcuts['host']})"
