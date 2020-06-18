@@ -239,9 +239,22 @@ properties:
             description: >-
               The external port number to expose, treating this port as raw TCP.
           http:
-            type: string
             description: >-
-              The hostname to expose, treating this port as HTTP.
+              Configuration to expose this port as HTTP.
+            oneOf:
+            - type: string
+              description: >-
+                The hostname to expose; this is a subdomain name.
+            - type: object
+              properties:
+                raw:
+                  type: string
+                  description: >-
+                    The raw hostname to expose (use when you need the port
+                    to not be on the shared parent domain). Deployment backends
+                    will not handle DNS records for this.
+              oneOf:
+              - required: [raw]
         # Exactly one of (http, tcp) allowed
         oneOf:
           - required: [http]
