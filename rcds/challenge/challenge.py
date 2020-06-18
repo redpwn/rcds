@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, cast
 
@@ -8,6 +9,10 @@ if TYPE_CHECKING:  # pragma: no cover
     from ..project import Project
     from ..project.assets import AssetManagerContext, AssetManagerTransaction
     import rcds
+
+
+def _strip_scheme(url: str) -> str:
+    return re.sub(r".*?://", "", url)
 
 
 class ChallengeLoader:
@@ -120,15 +125,19 @@ class Challenge:
                 Dict[str, Any], next(iter(self.config["expose"].values()))[0]
             )
             shortcuts["host"] = expose_cfg.get("http", expose_cfg.get("host", None))
+            has_url = False
             if "tcp" in expose_cfg:
                 shortcuts["port"] = expose_cfg["tcp"]
                 shortcuts["nc"] = f"nc {shortcuts['host']} {shortcuts['port']}"
-                shortcuts["url"] = (
-                    f"[{shortcuts['host']}:{shortcuts['port']}]"
-                    f"(http://{shortcuts['host']}:{shortcuts['port']})"
-                )
+                shortcuts["url"] = f"http://{shortcuts['host']}:{shortcuts['port']}"
+                has_url = True
             if "http" in expose_cfg:
-                shortcuts["url"] = f"[{shortcuts['host']}](https://{shortcuts['host']})"
+                shortcuts["url"] = f"https://{shortcuts['host']}"
+                has_url = True
+            if has_url:
+                shortcuts[
+                    "link"
+                ] = f"[{_strip_scheme(shortcuts['url'])}]({shortcuts['url']})"
 
         return shortcuts
 

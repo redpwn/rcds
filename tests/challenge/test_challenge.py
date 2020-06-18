@@ -90,7 +90,11 @@ class TestContextShortcuts:
         shortcuts = chall.get_context_shortcuts()
         assert shortcuts["host"] == expose_cfg_copy["host"]
         assert shortcuts["port"] == expose_cfg_copy["tcp"]
-        assert shortcuts["url"] == (
+        assert (
+            shortcuts["url"]
+            == f"http://{expose_cfg_copy['host']}:{expose_cfg_copy['tcp']}"
+        )
+        assert shortcuts["link"] == (
             f"[{expose_cfg_copy['host']}:{expose_cfg_copy['tcp']}]"
             f"(http://{expose_cfg_copy['host']}:{expose_cfg_copy['tcp']})"
         )
@@ -104,6 +108,7 @@ class TestContextShortcuts:
         expose_cfg_copy = deepcopy(chall.config["expose"]["nginx"][0])
         shortcuts = chall.get_context_shortcuts()
         assert shortcuts["host"] == expose_cfg_copy["http"]
-        assert shortcuts["url"] == (
+        assert shortcuts["url"] == f"https://{expose_cfg_copy['http']}"
+        assert shortcuts["link"] == (
             f"[{expose_cfg_copy['http']}](https://{expose_cfg_copy['http']})"
         )
