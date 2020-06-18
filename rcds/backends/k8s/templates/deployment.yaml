@@ -39,3 +39,11 @@ spec:
             {{ container.config.resources | yaml(12) }}
           {% endif %}
       automountServiceAccountToken: false
+      {% if options.tolerations %}
+      tolerations:
+        {{ options.tolerations | yaml(8) }}
+      {% endif %}
+      {% if options.affinity %}
+      affinity:
+        {{ options.affinity | yaml(8) }}
+      {% endif %}

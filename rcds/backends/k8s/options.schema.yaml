@@ -27,5 +27,13 @@ properties:
         $ref: "#/definitions/annotation"
       service:
         $ref: "#/definitions/annotation"
+  tolerations:
+    type: array
+    description: >-
+      Kubernetes tolerations applied to challenge pods.
+  affinity:
+    type: object
+    description: >-
+      Kubernetes affinities applied to challenge pods.
 required:
   - domain
