@@ -8,6 +8,10 @@ metadata:
   labels:
     {{ helpers.common_labels() | indent(4) }}
     {{ helpers.container_labels() | indent(4) }}
+  {% if options.annotations and options.annotations.service %}
+  annotations:
+    {{ options.annotations.service | yaml(4) }}
+  {% endif %}
 spec:
   type: {{ 'NodePort' if container.expose is not none and container.expose|selectattr("tcp", "defined")|first is defined else 'ClusterIP' }}
   selector:

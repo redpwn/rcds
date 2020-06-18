@@ -10,6 +10,10 @@ metadata:
   labels:
     {{ helpers.common_labels() | indent(4) }}
     {{ helpers.container_labels() | indent(4) }}
+  {% if options.annotations and options.annotations.ingress %}
+  annotations:
+    {{ options.annotations.ingress | yaml(4) }}
+  {% endif %}
 spec:
   rules:
   {% for httpPort in httpPorts %}
