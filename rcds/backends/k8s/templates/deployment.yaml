@@ -25,6 +25,7 @@ spec:
           ports:
           {% for port in container.config.ports %}
             - containerPort: {{ port }}
+              name: port-{{ port }}
           {% endfor %}
           {% endif %}
           {% if container.config.environment %}

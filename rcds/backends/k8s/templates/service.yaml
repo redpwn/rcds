@@ -21,6 +21,7 @@ spec:
   {% for port in container.config.ports %}
     - port: {{ port }}
       targetPort: {{ port }}
+      name: port-{{ port }}
     {% set exposedPort = container.expose|selectattr("target", "eq", port)|first %}
     {% if exposedPort and exposedPort.tcp %}
       nodePort: {{ exposedPort.tcp }}
