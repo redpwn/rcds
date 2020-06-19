@@ -53,12 +53,24 @@ class ScoreboardBackend(rcds.backend.BackendScoreboard):
             "default": True,
         }
 
-        schema["required"] += ["author", "category", "tiebreakEligible"]
+        # sortWeight
+        schema["properties"]["sortWeight"] = {
+            "type": "number",
+            "description": (
+                "A parameter used for ordering when points and solves are equal."
+            ),
+            "default": 0,
+        }
+
+        schema["required"] += ["author", "category", "tiebreakEligible", "sortWeight"]
 
     def commit(self) -> bool:
         # Validate challenges
         for challenge in self._project.challenges.values():
             self.validate_challenge(challenge)
+
+        for challenge in self._project.challenges.values():
+            self.preprocess_challenge(challenge)
 
         # Begin actual commit
         remote_challenges: Set[str] = set(
@@ -91,10 +103,25 @@ class ScoreboardBackend(rcds.backend.BackendScoreboard):
                     'Unexpected content in "flag" key on challenge config'
                 )
 
+    def preprocess_challenge(self, challenge: rcds.Challenge) -> None:
+        chall_id = challenge.config["id"]
+        if "sortOrder" in self._options:
+            if chall_id in self._options["sortOrder"]:
+                challenge.config["sortWeight"] = self._options["sortOrder"].index(
+                    chall_id
+                )
+
     def commit_challenge(self, challenge: rcds.Challenge) -> None:
         chall_id = challenge.config["id"]
         rctf_challenge: Dict[str, Any] = {"managedBy": "rcds"}
-        for common_field in ["name", "author", "category", "flag", "tiebreakEligible"]:
+        for common_field in [
+            "name",
+            "author",
+            "category",
+            "flag",
+            "tiebreakEligible",
+            "sortWeight",
+        ]:
             rctf_challenge[common_field] = challenge.config[common_field]
         rctf_challenge["description"] = challenge.render_description()
         if "value" in challenge.config:

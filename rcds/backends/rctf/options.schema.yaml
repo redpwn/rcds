@@ -21,5 +21,11 @@ properties:
         default: 500
     required: ['minPoints', 'maxPoints']
     default: {}
+  sortOrder:
+    type: array
+    description: >-
+      List of challenge IDs - their sortWeights will be set in this order
+    items:
+      type: string
 required: ['url', 'token', 'scoring']
 default: {}
