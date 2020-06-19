@@ -165,6 +165,7 @@ class TestProjectDefaults:
                 "requests": {"cpu": "10m", "memory": "10Mi"},
             },
             "ports": [80],
+            "replicas": 1,
         }
         assert cfg1["containers"]["partial"] == {
             "image": "gcr.io/google-samples/hello-app",
@@ -173,6 +174,7 @@ class TestProjectDefaults:
                 "requests": {"cpu": "10m", "memory": "10Mi"},
             },
             "ports": [80],
+            "replicas": 1,
         }
         assert cfg1["expose"]["main"][0] == {"target": 80, "tcp": 31525, "foo": "bar"}
         assert cfg1["expose"]["partial"][0] == {

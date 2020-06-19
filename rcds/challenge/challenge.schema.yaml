@@ -152,6 +152,13 @@ properties:
                   type: string
             required:
             - context
+        replicas:
+          type: integer
+          description: >-
+            Number of replicas of this container to run. Set to 1 for stateful
+            applications.
+          default: 1
+          minimum: 1
         environment:
           type: object
           description: >-

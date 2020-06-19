@@ -8,6 +8,7 @@ metadata:
     {{ helpers.common_labels() | indent(4) }}
     {{ helpers.container_labels() | indent(4) }}
 spec:
+  replicas: {{ container.config.replicas }}
   selector:
     matchLabels:
       {{ helpers.common_labels() | indent(6) }}
