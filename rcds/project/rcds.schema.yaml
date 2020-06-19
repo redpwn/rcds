@@ -64,5 +64,10 @@ properties:
       anyOf:
         # Properties that are not allowed to have defaults
       - required: ['id']
+  flagFormat:
+    type: string
+    description: >-
+      (Optional) regex to validate all flags against. Will be surrounded with `^$`.
+    format: regex
 required:
 - backends

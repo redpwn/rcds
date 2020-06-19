@@ -1,7 +1,18 @@
+import re
 from copy import deepcopy
 from itertools import tee
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Tuple, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    Optional,
+    Pattern,
+    Tuple,
+    Union,
+    cast,
+)
 from warnings import warn
 
 import jsonschema
@@ -30,12 +41,19 @@ class TargetFileNotFoundError(TargetNotFoundError):
         self.target = target
 
 
+class InvalidFlagError(errors.ValidationError):
+    pass
+
+
 class ConfigLoader:
     """
     Object that manages loading challenge config files
     """
 
     project: "Project"
+    config_schema: Dict[str, Any]
+    config_schema_validator: Any
+    _flag_regex: Optional[Pattern[str]] = None
 
     def __init__(self, project: "Project"):
         """
@@ -43,6 +61,12 @@ class ConfigLoader:
         """
         self.project = project
         self.config_schema = deepcopy(config_schema)
+
+        # Load flag regex if present
+        if "flagFormat" in self.project.config:
+            self._flag_regex = re.compile(f"^{self.project.config['flagFormat']}$")
+
+        # Backend config patching
         for backend in [
             self.project.container_backend,
             self.project.scoreboard_backend,
@@ -165,12 +189,19 @@ class ConfigLoader:
                                 f"not exist",
                                 f,
                             )
-                if isinstance(config["flag"], str) and config["flag"].count("\n") > 0:
-                    warn(
-                        RuntimeWarning(
-                            "Flag contains multiple lines; is this intended?"
+                if isinstance(config["flag"], str):
+                    if self._flag_regex is not None and not self._flag_regex.match(
+                        config["flag"]
+                    ):
+                        yield InvalidFlagError(
+                            f'Flag "{config["flag"]}" does not match the flag format'
                         )
-                    )
+                    if config["flag"].count("\n") > 0:
+                        warn(
+                            RuntimeWarning(
+                                "Flag contains multiple lines; is this intended?"
+                            )
+                        )
         yield config
 
     def check_config(

@@ -182,3 +182,30 @@ class TestProjectDefaults:
             "tcp": 31546,
             "foo": "baz",
         }
+
+
+class TestFlagFormat:
+    @staticmethod
+    def test_valid_flag(project: Project, datadir) -> None:
+        project.config["flagFormat"] = r"flag\{[a-z]*\}"
+        configloader = config.ConfigLoader(project)
+        cfg, errors = configloader.check_config(
+            datadir / "flag-format" / "valid" / "challenge.yml"
+        )
+        assert cfg is not None
+        assert errors is None
+
+    @staticmethod
+    def test_invalid_flag(project: Project, datadir) -> None:
+        project.config["flagFormat"] = r"flag\{[a-z]*\}"
+        configloader = config.ConfigLoader(project)
+        cfg, errors = configloader.check_config(
+            datadir / "flag-format" / "invalid" / "challenge.yml"
+        )
+        assert errors is not None
+        assert cfg is None
+        errors = list(errors)
+        error_messages = [str(e) for e in errors]
+        assert len(errors) != 0
+        assert 'Flag "flag{1234}" does not match the flag format' in error_messages
+        assert sum([1 for e in errors if isinstance(e, config.InvalidFlagError)]) == 1
