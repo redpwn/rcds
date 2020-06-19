@@ -37,7 +37,7 @@ class ContainerBackend(rcds.backend.BackendContainerRuntime):
         self._jinja_env = jinja_env.overlay()
         self._jinja_env.globals["options"] = self._options
 
-        config.load_kube_config()
+        config.load_kube_config(context=self._options.get("kubeContext", None))
 
     def commit(self) -> bool:
         deployed_challs = filter(
