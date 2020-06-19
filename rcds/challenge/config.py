@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Tuple, Union, cast
 from warnings import warn
 
+import jsonschema
+
 from rcds import errors
 
 from ..util import deep_merge, load_any
@@ -48,7 +50,7 @@ class ConfigLoader:
             if backend is not None:
                 backend.patch_challenge_schema(self.config_schema)
         self.config_schema_validator = DefaultValidatingDraft7Validator(
-            schema=self.config_schema
+            schema=self.config_schema, format_checker=jsonschema.draft7_format_checker
         )
 
     def _apply_defaults(self, config: Dict[str, Any]) -> Dict[str, Any]:

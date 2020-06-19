@@ -59,7 +59,8 @@ properties:
             File to load the flag from. The file should contain one line with
             only the flag.
         regex:
-          type: regex
+          type: string
+          format: regex
       # Exactly one of (file, regex) allowed
       oneOf:
       - required: [file]

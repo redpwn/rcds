@@ -6,13 +6,16 @@ from itertools import tee
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional, Tuple, Union, cast
 
+import jsonschema
+
 from rcds import errors
 
 from ..util import load_any
 from ..util.jsonschema import DefaultValidatingDraft7Validator
 
 config_schema_validator = DefaultValidatingDraft7Validator(
-    schema=load_any(Path(__file__).parent / "rcds.schema.yaml")
+    schema=load_any(Path(__file__).parent / "rcds.schema.yaml"),
+    format_checker=jsonschema.draft7_format_checker,
 )
 
 
