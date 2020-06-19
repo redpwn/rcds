@@ -107,7 +107,7 @@ class ScoreboardBackend(rcds.backend.BackendScoreboard):
         chall_id = challenge.config["id"]
         if "sortOrder" in self._options:
             if chall_id in self._options["sortOrder"]:
-                challenge.config["sortWeight"] = self._options["sortOrder"].index(
+                challenge.config["sortWeight"] = -self._options["sortOrder"].index(
                     chall_id
                 )
 
