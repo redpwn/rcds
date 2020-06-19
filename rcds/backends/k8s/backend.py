@@ -33,7 +33,7 @@ class ContainerBackend(rcds.backend.BackendContainerRuntime):
         if not options_schema_validator.is_valid(self._options):
             raise ValueError("Invalid options")
 
-        self._namespace_template = Template(self._options["namespace-template"])
+        self._namespace_template = Template(self._options["namespaceTemplate"])
         self._jinja_env = jinja_env.overlay()
         self._jinja_env.globals["options"] = self._options
 
