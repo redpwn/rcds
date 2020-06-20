@@ -212,6 +212,13 @@ class AssetManagerContext:
             with self._manifest_file.open("r") as fd:
                 manifest = json.load(fd)
             self._files = set(manifest["files"])
+            for fn in list(self._files):
+                f = self._get(fn)
+                if f.is_symlink() and not f.exists():
+                    # Broken symlink; remove it
+                    self._files.remove(fn)
+                    f.unlink()
+            self.sync()
         except FileNotFoundError:
             pass
 

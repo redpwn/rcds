@@ -320,6 +320,18 @@ class TestCacheErrorRecovery:
         assert "Unexpected item found in cache: " in str(record[0].message.args[0])
         assert not dir1.exists()
 
+    def test_broken_link(self, datadir: Path, am_fn: assets.AssetManager) -> None:
+        asset_manager = am_fn
+        ctx = asset_manager.create_context("challenge")
+        transaction = ctx.transaction()
+        transaction.add_file("file1", datadir / "file1")
+        transaction.commit()
+        (datadir / "file1").unlink()
+        ctx = asset_manager.create_context("challenge")
+        transaction = ctx.transaction()
+        transaction.add_file("file1", datadir / "file2")
+        transaction.commit()
+
 
 class TestInternals:
     def test_add_remove(self, am_fn: assets.AssetManager) -> None:
