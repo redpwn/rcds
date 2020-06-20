@@ -24,7 +24,7 @@ def kind_to_api_method_postfix(kind: str) -> str:
 
 
 def get_api_method_for_kind(api_client: Any, method: str, kind: str) -> Callable:
-    return api_client.__getattribute__(method + kind_to_api_method_postfix(kind))
+    return getattr(api_client, method + kind_to_api_method_postfix(kind))
 
 
 def labels_to_label_selector(labels: Dict[str, str]) -> str:
