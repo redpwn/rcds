@@ -25,6 +25,7 @@ def deploy() -> None:
     for challenge in project.challenges.values():
         cm = rcds.challenge.docker.ContainerManager(challenge)
         for container_name, container in cm.containers.items():
+            click.echo(f"{challenge.config['id']}: checking container {container_name}")
             if not container.is_built():
                 click.echo(
                     f"{challenge.config['id']}: building container {container_name}"
