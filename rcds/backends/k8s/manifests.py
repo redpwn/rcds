@@ -109,13 +109,19 @@ def sync_manifests(all_manifests: Iterable[Dict[str, Any]]):
                             api_version_to_client[manifest["apiVersion"]], "patch", kind
                         )(manifest_name, namespace, manifest)
                     except client.rest.ApiException:
-                        # Conflict of some sort - let's just overwrite it
-                        print(f"PUT {kind} {namespace}/{manifest_name}")
+                        # Conflict of some sort - let's just delete and recreate it
+                        print(f"DELETE {kind} {namespace}/{manifest_name}")
                         get_api_method_for_kind(
                             api_version_to_client[manifest["apiVersion"]],
-                            "replace",
+                            "delete",
                             kind,
-                        )(manifest_name, namespace, manifest)
+                        )(manifest_name, namespace)
+                        print(f"CREATE {kind} {namespace}/{manifest_name}")
+                        get_api_method_for_kind(
+                            api_version_to_client[manifest["apiVersion"]],
+                            "create",
+                            kind,
+                        )(namespace, manifest)
                 except KeyError:
                     # the manifest doesn't exist; create it
                     print(f"CREATE {kind} {namespace}/{manifest_name}")
