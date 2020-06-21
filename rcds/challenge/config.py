@@ -94,12 +94,12 @@ class ConfigLoader:
         root_defaults.pop("provide", None)
 
         config = deep_merge(root_defaults, config)
-        if container_defaults is not None:
+        if container_defaults is not None and "containers" in config:
             for container_name, container_config in config["containers"].items():
                 config["containers"][container_name] = deep_merge(
                     dict(), container_defaults, container_config
                 )
-        if expose_defaults is not None:
+        if expose_defaults is not None and "expose" in config:
             for expose_config in config["expose"].values():
                 for i, expose_port in enumerate(expose_config):
                     expose_config[i] = deep_merge(dict(), expose_defaults, expose_port)

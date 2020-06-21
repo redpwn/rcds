@@ -182,6 +182,8 @@ class TestProjectDefaults:
             "tcp": 31546,
             "foo": "baz",
         }
+        cfg2 = configloader.load_config(datadir / "defaults" / "2" / "challenge.yml")
+        assert cfg2["value"] == 100
 
 
 class TestFlagFormat:
