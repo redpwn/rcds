@@ -15,7 +15,7 @@ from typing import (
 )
 from warnings import warn
 
-import jsonschema
+import jsonschema  # type: ignore
 
 from rcds import errors
 

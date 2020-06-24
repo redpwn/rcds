@@ -6,7 +6,7 @@ from itertools import tee
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional, Tuple, Union, cast
 
-import jsonschema
+import jsonschema  # type: ignore
 
 from rcds import errors
 
