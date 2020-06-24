@@ -22,11 +22,17 @@ class TestGetContextFiles:
             "a/b/.file",
         }
 
-    def test_with_dockerignore(self, datadir) -> None:
+    def test_with_dockerignore(self, datadir: Path) -> None:
         df_root = datadir / "contexts" / "dockerignore"
         assert df_root.is_dir()
         got = {str(p.relative_to(df_root)) for p in docker.get_context_files(df_root)}
         assert got == {"Dockerfile", ".dockerignore", ".file", "file"}
+
+    def test_complex_dockerignore(self, datadir: Path) -> None:
+        df_root = datadir / "contexts" / "complex_dockerignore"
+        assert df_root.is_dir()
+        got = {str(p.relative_to(df_root)) for p in docker.get_context_files(df_root)}
+        assert got == {"a", "b", "c/file", "d/file"}
 
 
 class TestGenerateSum:

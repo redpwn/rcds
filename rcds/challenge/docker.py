@@ -1,8 +1,9 @@
 import base64
+import collections.abc
 import hashlib
 import json
 from pathlib import Path, PurePosixPath
-from typing import TYPE_CHECKING, Any, Dict, Iterator, Type, cast
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, Type, Union, cast
 
 import docker  # type: ignore
 import pathspec  # type: ignore
@@ -10,6 +11,14 @@ import pathspec  # type: ignore
 if TYPE_CHECKING:  # pragma: no cover
     from .challenge import Challenge
     from ..project import Project
+
+
+def flatten(i: Iterable[Union[str, Iterable[str]]]) -> Iterable[str]:
+    for x in i:
+        if isinstance(x, collections.abc.Iterable) and not isinstance(x, str):
+            yield from (y for y in x)
+        else:
+            yield x
 
 
 def get_context_files(root: Path) -> Iterator[Path]:
@@ -23,7 +32,32 @@ def get_context_files(root: Path) -> Iterator[Path]:
     dockerignore = root / ".dockerignore"
     if dockerignore.exists():
         with dockerignore.open("r") as fd:
-            spec = pathspec.PathSpec.from_lines("gitwildmatch", fd)
+            spec = pathspec.PathSpec.from_lines(
+                "gitwildmatch",
+                flatten(
+                    # pathspec's behavior with negated patterns is different than that
+                    # of docker (and its own behavior with non-negated patterns) in that
+                    # patterns ending with `/` will match files in subdirectories, but
+                    # not a file with the same name, and pattens not ending in `/` will
+                    # only match files, but not files in subdirectories. For example,
+                    # the pattern `!/a` will exclude `a`, but not `a/b`, and the pattern
+                    # `!/a/` will exclude `a/b`, but not `a`. Since docker treats these
+                    # interchangeably, we automatically insert the corresponding ignore
+                    # rule into the rules list if a negated pattern is detected (insert
+                    # `!/a/` if `!/a` is detected and vice versa).
+                    # FIXME: normalize / parse the lines better to support e.g. comments
+                    (
+                        (
+                            [line[:-2] + "\n", line]
+                            if line[-2] == "/"
+                            else [line, line[:-1] + "/\n"]
+                        )
+                        if line[0] == "!"
+                        else line
+                    )
+                    for line in fd
+                ),
+            )
         files = filter(lambda p: not spec.match_file(p.relative_to(root)), files)
     return filter(lambda p: p.is_file(), files)
 
