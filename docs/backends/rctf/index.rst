@@ -34,3 +34,8 @@ Options Reference
 -----------------
 
 .. jsonschema:: ../../../rcds/backends/rctf/options.schema.yaml
+
+Raw schema:
+
+.. literalinclude:: ../../../rcds/backends/rctf/options.schema.yaml
+    :language: yaml

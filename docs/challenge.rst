@@ -188,3 +188,8 @@ Reference
 ---------
 
 .. jsonschema:: ../rcds/challenge/challenge.schema.yaml
+
+Raw schema:
+
+.. literalinclude:: ../rcds/challenge/challenge.schema.yaml
+    :language: yaml

@@ -77,3 +77,8 @@ Options Reference
 -----------------
 
 .. jsonschema:: ../../../rcds/backends/k8s/options.schema.yaml
+
+Raw schema:
+
+.. literalinclude:: ../../../rcds/backends/k8s/options.schema.yaml
+    :language: yaml

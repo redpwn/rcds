@@ -54,3 +54,8 @@ Reference
 ---------
 
 .. jsonschema:: ../rcds/project/rcds.schema.yaml
+
+Raw schema:
+
+.. literalinclude:: ../rcds/project/rcds.schema.yaml
+    :language: yaml
