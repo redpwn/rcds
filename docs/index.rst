@@ -10,7 +10,17 @@ rCDS - A CTF Challenge Deployment Tool
     :maxdepth: 1
     :caption: Contents
 
+    project
+    challenge
+    backends/index
     contributing
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Backends
+
+    backends/rctf/index
+    backends/k8s/index
 
 .. toctree::
     :maxdepth: 2
