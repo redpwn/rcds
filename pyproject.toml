@@ -39,6 +39,7 @@ pytest-datadir = "^1.3.1"
 sphinx = "^3.1.1"
 sphinx_rtd_theme = "^0.5.0"
 isort = "^4.3.21"
+sphinx-jsonschema = "^1.15"
 
 [tool.isort]
 line_length = 88

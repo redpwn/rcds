@@ -1,5 +1,5 @@
-:mod:`rcds.project` - Projects
-==============================
+:mod:`rcds.project` --- Projects
+================================
 
 .. automodule:: rcds.project
 

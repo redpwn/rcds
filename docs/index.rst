@@ -3,11 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to rCDS's documentation!
-================================
+rCDS - A CTF Challenge Deployment Tool
+======================================
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Contents
 
     contributing
@@ -16,8 +16,8 @@ Welcome to rCDS's documentation!
     :maxdepth: 2
     :caption: API Reference
 
-    project
-    challenge
+    api/project
+    api/challenge
 
 
 Indices and tables

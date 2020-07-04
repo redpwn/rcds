@@ -1,5 +1,5 @@
-:mod:`rcds.challenge` - Challenges
-==================================
+:mod:`rcds.challenge` --- Challenges
+====================================
 
 .. automodule:: rcds.challenge
 
