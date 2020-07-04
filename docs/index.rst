@@ -6,6 +6,22 @@
 rCDS - A CTF Challenge Deployment Tool
 ======================================
 
+rCDS is redpwn_'s CTF challenge deployment tool. It is designed to automate the
+entire challenge deployment process, taking sources from challenge authors and
+provisioning the necessary resources to both make challenges available on the
+competition scoreboard and to spin up Docker containers that the challenge needs
+to run.
+
+If you are a challenge author for a CTF using rCDS, head over to the
+:doc:`challenge config format docs <challenge>`.
+
+.. _redpwn: https://redpwn.net/
+
+.. toctree::
+    :hidden:
+
+    Introduction <self>
+
 .. toctree::
     :maxdepth: 1
     :caption: Contents

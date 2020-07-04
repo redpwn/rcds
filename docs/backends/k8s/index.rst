@@ -24,7 +24,7 @@ Additional annotations on ingress and service objects can be specified through
 the ``annotations`` key, and affinity and tolerations on pods can be set through
 ``affinity`` and ``tolerations``, respectively.
 
-See the `Options Reference`_ for more details.
+See the :ref:`backends/k8s#reference` for more details.
 
 Recommended Cluster Configuration
 ---------------------------------
@@ -70,6 +70,8 @@ HTTPS on challenges.
     challenges.
 
 .. _Traefik: https://traefik.io/
+
+.. _backends/k8s#reference:
 
 Options Reference
 -----------------

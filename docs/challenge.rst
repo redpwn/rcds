@@ -15,7 +15,7 @@ unless you have a very good reason to, don't set this in ``challenge.yaml``.
 challenge.
 
 ``description`` -- self-explanatory. It is in Markdown format and will be
-processed with Jinja_. See Templating_ for more details.
+processed with Jinja_. See :ref:`challenge#templating` for more details.
 
 ``category`` -- self-explanatory. If the challenge directory is exactly two
 directories deep (for example, ``/pwn/chall``, where ``/`` is the project root),
@@ -50,12 +50,14 @@ challenge does not exist.
 Deployment
 ----------
 
-In rCDS, you define first define all of the `containers <#containers>`_ that
-your challenge needs to run, and then declare how you want them `exposed
-<#expose>`_ to the world.
+In rCDS, you define first define all of the :ref:`containers
+<challenge#containers>` that your challenge needs to run, and then declare how
+you want them :ref:`exposed <challenge#expose>` to the world.
 
 ``deployed`` --- whether or not this challenge's containers should be deployed.
 Defaults to ``true``.
+
+.. _challenge#containers:
 
 Containers
 ~~~~~~~~~~
@@ -64,11 +66,11 @@ The ``containers`` key is an object whose keys are the names of the containers
 this challenge creates. These containers can either use an existing image, or
 specify a path to a Dockerfile to build from. Each container must declare all
 ports that need to be connected to, both from other containers and by
-competitors; which ports are exposed to competitors are specified `separately
-<#expose>`_. Containers from the same challenge can connect to each other via a
-DNS lookup of their names; for example, if a container ``app`` is defined,
-another container can connect to any of ``app``'s declared ports by looking up
-the name ``app``.
+competitors; which ports are exposed to competitors are specified
+:ref:`separately <challenge#expose>`. Containers from the same challenge can
+connect to each other via a DNS lookup of their names; for example, if a
+container ``app`` is defined, another container can connect to any of ``app``'s
+declared ports by looking up the name ``app``.
 
 ``image`` --- the tag of an existing image to run
 
@@ -98,13 +100,16 @@ implemented).
 
 .. __: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
 
+.. _challenge#expose:
+
 Expose
 ~~~~~~
 
-The top-level ``expose`` key defines all of the ports on `containers
-<#containers>`_ that should be exposed to competitors. It is an object whose
-keys correspond to the names of defined containers, and whose values are arrays
-of port objects. These objects each describe how one port should be exposed.
+The top-level ``expose`` key defines all of the ports on :ref:`containers
+<challenge#containers>` that should be exposed to competitors. It is an object
+whose keys correspond to the names of defined containers, and whose values are
+arrays of port objects. These objects each describe how one port should be
+exposed.
 
 ``target`` --- the port on the container that this rule is targeting.
 
@@ -118,6 +123,8 @@ on which the challenge will be hosted. Alternatively, it can be an object with a
 will be served on. When using ``http.raw``, rCDS will handle the virtual
 hosting, however as a challenge author, you will need to coordinate with your
 infrastructure admin on setting up TLS and DNS records.
+
+.. _challenge#templating:
 
 Templating
 ----------

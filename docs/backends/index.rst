@@ -31,7 +31,7 @@ These are responsible for displaying the challenge to competitors; they handle
 uploading the challenge's metadata (description, flags, point value, etc) and
 any assets that are served to competitors.
 
-- `rCTF <rctf/index.html>`_
+- :doc:`rCTF <rctf/index>`
 
 Container Runtime Backends
 --------------------------
@@ -40,4 +40,4 @@ These are responsible for running the built challenge containers. By design,
 none of the built-in backends will start containers on the machine that rCDS is
 being run from.
 
-- `Kubernetes <k8s/index.html>`_
+- :doc:`Kubernetes <k8s/index>`

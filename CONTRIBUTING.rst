@@ -25,8 +25,7 @@ ease your development process (particularly with mypy).
 
 If you want a live preview of the docs as you work, you can install
 sphinx-autobuild_ into the Poetry virtualenv (``poetry run pip install
-sphinx-autobuild``) and run it via ``poetry run sphinx-autobuild docs
-docs/_build/html``; this may be included into a Makefile in the future.
+sphinx-autobuild``) and run it via ``poetry run make livebuild``.
 
 Git
 ---

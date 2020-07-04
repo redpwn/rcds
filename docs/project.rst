@@ -5,10 +5,12 @@ The file ``rcds.yaml`` defines the configuration for the current project, and
 its location also defines the root of the project. ``.yml`` and ``.json`` files
 are also supported. Challenges will be searched for in subdirectories of the
 project root. This file contains various global configuration options, including
-for the backends_ and `Docker containers`_
+for the :doc:`backends </backends/index>` and :ref:`Docker containers
+<project#docker>`
 
-.. _backends: backends/index.html
-.. _Docker containers: #docker
+.. _backends: ../backends/
+
+.. _project#docker:
 
 Docker
 ------
