@@ -24,6 +24,8 @@ Each backend may also modify the ``challenge.yaml`` schema---be sure to read
 the docs for the backends you are using to understand challenge options specific
 to that backend.
 
+.. _backends#scoreboard:
+
 Scoreboard Backends
 -------------------
 
@@ -32,6 +34,8 @@ uploading the challenge's metadata (description, flags, point value, etc) and
 any assets that are served to competitors.
 
 - :doc:`rCTF <rctf/index>`
+
+.. _backends#container-runtime:
 
 Container Runtime Backends
 --------------------------

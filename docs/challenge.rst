@@ -72,6 +72,12 @@ connect to each other via a DNS lookup of their names; for example, if a
 container ``app`` is defined, another container can connect to any of ``app``'s
 declared ports by looking up the name ``app``.
 
+Whether a container needs to be rebuilt is determined by looking at every file
+in the Docker build context. Thus, it is very important that you include only
+what is necessary in the build context by using a ``.dockerignore`` file; at
+minimum, ``challenge.yaml`` should be excluded to prevent needing to rebuild the
+container when the challenge's description is updated.
+
 ``image`` --- the tag of an existing image to run
 
 ``build`` --- settings for building this container. If it is a string, then it
