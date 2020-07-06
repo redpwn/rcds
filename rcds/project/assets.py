@@ -20,8 +20,9 @@ from typing import (
 from warnings import warn
 
 if TYPE_CHECKING:  # pragma: no cover
-    from .project import Project
     import rcds
+
+    from .project import Project
 
 
 File = Union[BinaryIO, Path, bytes]

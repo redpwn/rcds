@@ -9,8 +9,8 @@ import docker  # type: ignore
 import pathspec  # type: ignore
 
 if TYPE_CHECKING:  # pragma: no cover
-    from .challenge import Challenge
     from ..project import Project
+    from .challenge import Challenge
 
 
 def flatten(i: Iterable[Union[str, Iterable[str]]]) -> Iterable[str]:

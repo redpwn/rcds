@@ -6,9 +6,10 @@ from ..util import SUPPORTED_EXTENSIONS, deep_merge, find_files
 from .config import ConfigLoader
 
 if TYPE_CHECKING:  # pragma: no cover
+    import rcds
+
     from ..project import Project
     from ..project.assets import AssetManagerContext, AssetManagerTransaction
-    import rcds
 
 
 def _strip_scheme(url: str) -> str:
