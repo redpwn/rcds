@@ -30,4 +30,4 @@ flake8:
 
 .PHONY: isort
 isort:
-	$(POETRY) run isort -y
+	$(POETRY) run isort .
