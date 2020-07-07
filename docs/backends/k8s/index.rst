@@ -10,6 +10,10 @@ doing this anyways since Kubernetes currently does not have hard multi-tenancy).
 A NetworkPolicy is also created to prevent network traffic from outside a
 challenge's namespace reaching any containers which are not explicitly exposed.
 
+Like with rCDS's Docker integration, the Kubernetes backend does not have a
+dependency on any system commands (e.g. ``kubectl``); having a kubeconfig in the
+standard location is all that is necessary.
+
 Configuration
 -------------
 

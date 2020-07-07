@@ -6,18 +6,29 @@
 rCDS - A CTF Challenge Deployment Tool
 ======================================
 
-rCDS is redpwn_'s CTF challenge deployment tool. It is designed to automate the
+.. A short version of this text is in README.rst
+
+rCDS_ is redpwn_'s CTF challenge deployment tool. It is designed to automate the
 entire challenge deployment process, taking sources from challenge authors and
 provisioning the necessary resources to both make challenges available on the
 competition scoreboard and to spin up Docker containers that the challenge needs
 to run.
 
+rCDS has an opinionated model for managing CTF challenges. It operates on a
+centralized challenge repository and is designed to be run from a CI/CD system.
+This repository is the single source of truth for all data about challenges, and
+rCDS itself essentially acts as a tool to sync the state of various systems (the
+scoreboard and the container runtime) to what is described by this repository.
+Authors do not directly interface with any of these systems, and instead push
+their changes and let a CI job apply them. Thus, the challenge repository can be
+versioned, creating an audit log of all changes and allowing for point-in-time
+rollbacks of everything regarding a challenge should something go wrong.
+
 If you are a challenge author for a CTF using rCDS, head over to the
 :doc:`challenge config format docs <challenge>`.
 
-rCDS operates on a centralized challenge repository. It is designed to be run
-from a CI/CD system (such as `GitLab CI`_). After validating all challenges'
-configurations, rCDS runs in 4 stages:
+rCDS's mode of operation is optimized for a CI environment. After validating
+all challenges' configurations, rCDS runs in 4 stages:
 
 1.  Build all challenge containers, as needed, and upload to a remote container
     registry
@@ -30,6 +41,11 @@ configurations, rCDS runs in 4 stages:
 At its core, rCDS only handles building the Docker containers and preparing all
 assets for a challenge (description, files, etc.)---everything else is handled
 by a :doc:`backend <backends/index>`.
+
+rCDS does not rely on any system dependencies other than its Python
+dependencies. It does not shell out to system commands for performing any
+operations, and thus does not need the Docker CLI installed; it just needs to be
+able to connect to a Docker daemon.
 
 GitLab CI
 ---------
@@ -71,6 +87,7 @@ the ``docker`` image; you can use ``python`` or any other image with a working
     You may need additional options to run various deployment backends; see
     :ref:`an example using GKE and rCTF <config-samples#gke-rctf-gitlab>`.
 
+.. _rCDS: https://github.com/redpwn/rcds
 .. _redpwn: https://redpwn.net/
 .. _GitLab CI: https://docs.gitlab.com/ee/ci
 
