@@ -10,11 +10,9 @@ BUILDDIR      = _build
 
 SPHINXAUTOBUILD ?= sphinx-autobuild
 
-# Put it first so that "make" without argument is like "make help".
-help:
-	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+.DEFAULT_GOAL = build
 
-.PHONY: help Makefile
+.PHONY: Makefile build livebuild
 
 # Convenience target
 build: dirhtml
