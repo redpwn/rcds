@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from importlib import import_module
 from typing import TYPE_CHECKING, Any, Dict
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     import rcds
 
 

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, cast
 from ..util import SUPPORTED_EXTENSIONS, deep_merge, find_files
 from .config import ConfigLoader
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     import rcds
 
     from ..project import Project
