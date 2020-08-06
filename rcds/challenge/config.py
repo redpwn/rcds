@@ -22,7 +22,7 @@ from rcds import errors
 from ..util import deep_merge, load_any
 from ..util.jsonschema import DefaultValidatingDraft7Validator
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from rcds import Project
 
 

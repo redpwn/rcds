@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, Type, Union, ca
 import docker  # type: ignore
 import pathspec  # type: ignore
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from ..project import Project
     from .challenge import Challenge
 

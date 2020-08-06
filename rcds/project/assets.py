@@ -19,7 +19,7 @@ from typing import (
 )
 from warnings import warn
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     import rcds
 
     from .project import Project
