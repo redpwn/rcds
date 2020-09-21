@@ -87,7 +87,7 @@ This is the configuration used for `redpwnCTF 2020`_.
         annotations:
           ingress:
             traefik.ingress.kubernetes.io/router.tls: "true"
-            traefik.ingress.kubernetes.io/router.middlewares: "nocontenttype-ingress@kubernetescrd"
+            traefik.ingress.kubernetes.io/router.middlewares: "ingress-nocontenttype@kubernetescrd"
     - resolve: rctf
       options:
         scoring:
@@ -123,6 +123,22 @@ This is the configuration used for `redpwnCTF 2020`_.
         name: production
       script:
         - rcds deploy
+
+The config creates Kubernetes Ingress objects compatible with Traefik, and
+references the following middleware CRD exists to disable Traefik's
+Content-Type auto-detection (change the name and namespace, both in the CRD and
+the ingress annotation, to suit your setup):
+
+.. code-block:: yaml
+
+    apiVersion: traefik.containo.us/v1alpha1
+    kind: Middleware
+    metadata:
+      name: nocontenttype
+      namespace: ingress
+    spec:
+      contentType:
+        autoDetect: false
 
 .. _Viper: https://github.com/redpwn/redpwnctf-2020-challenges/blob/master/web/viper/challenge.yaml
 .. _redpwnCTF 2020: https://2020.redpwn.net/
