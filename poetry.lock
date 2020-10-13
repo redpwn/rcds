@@ -21,7 +21,6 @@ description = "Atomic file writes."
 category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-marker = "sys_platform == \"win32\""
 
 [[package]]
 name = "attrs"
@@ -32,10 +31,10 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.extras]
-dev = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "sphinx", "sphinx-rtd-theme", "pre-commit"]
+dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "sphinx", "sphinx-rtd-theme", "pre-commit"]
 docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
-tests = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
-tests_no_zope = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
+tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
+tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
 
 [[package]]
 name = "babel"
@@ -56,13 +55,10 @@ category = "dev"
 optional = false
 python-versions = ">=3.6"
 
-[package.extras]
-colorama = ["colorama (>=0.4.3)"]
-d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
-
 [package.dependencies]
 appdirs = "*"
 click = ">=7.1.2"
+dataclasses = {version = ">=0.6", markers = "python_version < \"3.7\""}
 mypy-extensions = ">=0.4.3"
 pathspec = ">=0.6,<1"
 regex = ">=2020.1.8"
@@ -70,9 +66,9 @@ toml = ">=0.10.1"
 typed-ast = ">=1.4.0"
 typing-extensions = ">=3.7.4"
 
-[package.dependencies.dataclasses]
-version = ">=0.6"
-python = "<3.7"
+[package.extras]
+colorama = ["colorama (>=0.4.3)"]
+d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [[package]]
 name = "cachetools"
@@ -97,7 +93,6 @@ description = "Validate configuration and produce human readable error messages.
 category = "dev"
 optional = false
 python-versions = ">=3.6.1"
-marker = "python_version >= \"3.6.1\" and python_version < \"4.0.0\""
 
 [[package]]
 name = "chardet"
@@ -122,7 +117,6 @@ description = "Cross-platform colored terminal text."
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-marker = "sys_platform == \"win32\""
 
 [[package]]
 name = "coverage"
@@ -142,7 +136,6 @@ description = "A backport of the dataclasses module for Python 3.6"
 category = "main"
 optional = false
 python-versions = ">=3.6, <3.7"
-marker = "python_version >= \"3.6\" and python_version < \"3.7\" or python_version < \"3.7\""
 
 [[package]]
 name = "distlib"
@@ -151,7 +144,6 @@ description = "Distribution utilities"
 category = "dev"
 optional = false
 python-versions = "*"
-marker = "python_version >= \"3.6.1\" and python_version < \"4.0.0\""
 
 [[package]]
 name = "docker"
@@ -161,15 +153,15 @@ category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
-[package.extras]
-ssh = ["paramiko (>=2.4.2)"]
-tls = ["pyOpenSSL (>=17.5.0)", "cryptography (>=1.3.4)", "idna (>=2.0.0)"]
-
 [package.dependencies]
-pywin32 = "227"
+pywin32 = {version = "227", markers = "sys_platform == \"win32\""}
 requests = ">=2.14.2,<2.18.0 || >2.18.0"
 six = ">=1.4.0"
 websocket-client = ">=0.32.0"
+
+[package.extras]
+ssh = ["paramiko (>=2.4.2)"]
+tls = ["pyOpenSSL (>=17.5.0)", "cryptography (>=1.3.4)", "idna (>=2.0.0)"]
 
 [[package]]
 name = "docutils"
@@ -186,7 +178,6 @@ description = "A platform independent file lock."
 category = "dev"
 optional = false
 python-versions = "*"
-marker = "python_version >= \"3.6.1\" and python_version < \"4.0.0\""
 
 [[package]]
 name = "flake8"
@@ -197,13 +188,10 @@ optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
 
 [package.dependencies]
+importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
 mccabe = ">=0.6.0,<0.7.0"
 pycodestyle = ">=2.6.0a1,<2.7.0"
 pyflakes = ">=2.2.0,<2.3.0"
-
-[package.dependencies.importlib-metadata]
-version = "*"
-python = "<3.8"
 
 [[package]]
 name = "flake8-bugbear"
@@ -228,12 +216,8 @@ python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 [package.dependencies]
 cachetools = ">=2.0.0,<5.0"
 pyasn1-modules = ">=0.2.1"
-setuptools = ">=40.3.0"
+rsa = {version = ">=3.1.4,<5", markers = "python_version >= \"3.5\""}
 six = ">=1.9.0"
-
-[package.dependencies.rsa]
-version = ">=3.1.4,<5"
-python = ">=3.5"
 
 [[package]]
 name = "identify"
@@ -242,7 +226,6 @@ description = "File identification library for Python"
 category = "dev"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
-marker = "python_version >= \"3.6.1\" and python_version < \"4.0.0\""
 
 [package.extras]
 license = ["editdistance"]
@@ -270,14 +253,13 @@ description = "Read metadata from Python packages"
 category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
-marker = "python_version >= \"3.6.1\" and python_version < \"3.8\" or python_version < \"3.8\""
+
+[package.dependencies]
+zipp = ">=0.5"
 
 [package.extras]
 docs = ["sphinx", "rst.linker"]
 testing = ["packaging", "pep517", "importlib-resources (>=1.3)"]
-
-[package.dependencies]
-zipp = ">=0.5"
 
 [[package]]
 name = "importlib-resources"
@@ -286,15 +268,12 @@ description = "Read resources from Python packages"
 category = "dev"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
-marker = "python_version >= \"3.6.1\" and python_version < \"3.7\""
+
+[package.dependencies]
+zipp = {version = ">=0.4", markers = "python_version < \"3.8\""}
 
 [package.extras]
 docs = ["sphinx", "rst.linker", "jaraco.packaging"]
-
-[package.dependencies]
-[package.dependencies.zipp]
-version = ">=0.4"
-python = "<3.8"
 
 [[package]]
 name = "iniconfig"
@@ -325,11 +304,11 @@ category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
-[package.extras]
-i18n = ["Babel (>=0.8)"]
-
 [package.dependencies]
 MarkupSafe = ">=0.23"
+
+[package.extras]
+i18n = ["Babel (>=0.8)"]
 
 [[package]]
 name = "jsonpointer"
@@ -347,19 +326,15 @@ category = "main"
 optional = false
 python-versions = "*"
 
+[package.dependencies]
+attrs = ">=17.4.0"
+importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
+pyrsistent = ">=0.14.0"
+six = ">=1.11.0"
+
 [package.extras]
 format = ["idna", "jsonpointer (>1.13)", "rfc3987", "strict-rfc3339", "webcolors"]
 format_nongpl = ["idna", "jsonpointer (>1.13)", "webcolors", "rfc3986-validator (>0.1.0)", "rfc3339-validator"]
-
-[package.dependencies]
-attrs = ">=17.4.0"
-pyrsistent = ">=0.14.0"
-setuptools = "*"
-six = ">=1.11.0"
-
-[package.dependencies.importlib-metadata]
-version = "*"
-python = "<3.8"
 
 [[package]]
 name = "kubernetes"
@@ -369,9 +344,6 @@ category = "main"
 optional = false
 python-versions = "*"
 
-[package.extras]
-adal = ["adal (>=1.0.2)"]
-
 [package.dependencies]
 certifi = ">=14.05.14"
 google-auth = ">=1.0.1"
@@ -379,10 +351,12 @@ python-dateutil = ">=2.5.3"
 pyyaml = ">=3.12"
 requests = "*"
 requests-oauthlib = "*"
-setuptools = ">=21.0.0"
 six = ">=1.9.0"
 urllib3 = ">=1.24.2"
 websocket-client = ">=0.32.0,<0.40.0 || >0.40.0,<0.41.0 || >=0.43.0"
+
+[package.extras]
+adal = ["adal (>=1.0.2)"]
 
 [[package]]
 name = "markupsafe"
@@ -416,13 +390,13 @@ category = "dev"
 optional = false
 python-versions = ">=3.5"
 
-[package.extras]
-dmypy = ["psutil (>=4.0)"]
-
 [package.dependencies]
 mypy-extensions = ">=0.4.3,<0.5.0"
 typed-ast = ">=1.4.0,<1.5.0"
 typing-extensions = ">=3.7.4"
+
+[package.extras]
+dmypy = ["psutil (>=4.0)"]
 
 [[package]]
 name = "mypy-extensions"
@@ -439,7 +413,6 @@ description = "Node.js virtual environment builder"
 category = "dev"
 optional = false
 python-versions = "*"
-marker = "python_version >= \"3.6.1\" and python_version < \"4.0.0\""
 
 [[package]]
 name = "oauthlib"
@@ -482,13 +455,11 @@ category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
+[package.dependencies]
+importlib-metadata = {version = ">=0.12", markers = "python_version < \"3.8\""}
+
 [package.extras]
 dev = ["pre-commit", "tox"]
-
-[package.dependencies]
-[package.dependencies.importlib-metadata]
-version = ">=0.12"
-python = "<3.8"
 
 [[package]]
 name = "pre-commit"
@@ -497,23 +468,16 @@ description = "A framework for managing and maintaining multi-language pre-commi
 category = "dev"
 optional = false
 python-versions = ">=3.6.1"
-marker = "python_version >= \"3.6.1\" and python_version < \"4.0.0\""
 
 [package.dependencies]
 cfgv = ">=2.0.0"
 identify = ">=1.0.0"
+importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
+importlib-resources = {version = "*", markers = "python_version < \"3.7\""}
 nodeenv = ">=0.11.1"
 pyyaml = ">=5.1"
 toml = "*"
 virtualenv = ">=20.0.8"
-
-[package.dependencies.importlib-metadata]
-version = "*"
-python = "<3.8"
-
-[package.dependencies.importlib-resources]
-version = "*"
-python = "<3.7"
 
 [[package]]
 name = "py"
@@ -590,14 +554,11 @@ category = "dev"
 optional = false
 python-versions = ">=3.5"
 
-[package.extras]
-checkqa_mypy = ["mypy (0.780)"]
-testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
-
 [package.dependencies]
-atomicwrites = ">=1.0"
+atomicwrites = {version = ">=1.0", markers = "sys_platform == \"win32\""}
 attrs = ">=17.4.0"
-colorama = "*"
+colorama = {version = "*", markers = "sys_platform == \"win32\""}
+importlib-metadata = {version = ">=0.12", markers = "python_version < \"3.8\""}
 iniconfig = "*"
 more-itertools = ">=4.0.0"
 packaging = "*"
@@ -605,9 +566,9 @@ pluggy = ">=0.12,<1.0"
 py = ">=1.8.2"
 toml = "*"
 
-[package.dependencies.importlib-metadata]
-version = ">=0.12"
-python = "<3.8"
+[package.extras]
+checkqa_mypy = ["mypy (0.780)"]
+testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
 
 [[package]]
 name = "pytest-datadir"
@@ -646,7 +607,6 @@ description = "Python for Window Extensions"
 category = "main"
 optional = false
 python-versions = "*"
-marker = "sys_platform == \"win32\""
 
 [[package]]
 name = "pyyaml"
@@ -672,15 +632,15 @@ category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
-[package.extras]
-security = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)"]
-socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7)", "win-inet-pton"]
-
 [package.dependencies]
 certifi = ">=2017.4.17"
 chardet = ">=3.0.2,<4"
 idna = ">=2.5,<3"
 urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
+
+[package.extras]
+security = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)"]
+socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7)", "win-inet-pton"]
 
 [[package]]
 name = "requests-oauthlib"
@@ -690,12 +650,12 @@ category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
-[package.extras]
-rsa = ["oauthlib (>=3.0.0)"]
-
 [package.dependencies]
 oauthlib = ">=3.0.0"
 requests = ">=2.0.0"
+
+[package.extras]
+rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
 
 [[package]]
 name = "requests-toolbelt"
@@ -715,7 +675,6 @@ description = "Pure-Python RSA implementation"
 category = "main"
 optional = false
 python-versions = ">=3.5, <4"
-marker = "python_version >= \"3.5\""
 
 [package.dependencies]
 pyasn1 = ">=0.1.3"
@@ -744,22 +703,16 @@ category = "main"
 optional = true
 python-versions = ">=3.5"
 
-[package.extras]
-docs = ["sphinxcontrib-websupport"]
-lint = ["flake8 (>=3.5.0)", "flake8-import-order", "mypy (>=0.780)", "docutils-stubs"]
-test = ["pytest", "pytest-cov", "html5lib", "typed-ast", "cython"]
-
 [package.dependencies]
 alabaster = ">=0.7,<0.8"
 babel = ">=1.3"
-colorama = ">=0.3.5"
+colorama = {version = ">=0.3.5", markers = "sys_platform == \"win32\""}
 docutils = ">=0.12"
 imagesize = "*"
 Jinja2 = ">=2.3"
 packaging = "*"
 Pygments = ">=2.0"
 requests = ">=2.5.0"
-setuptools = "*"
 snowballstemmer = ">=1.1"
 sphinxcontrib-applehelp = "*"
 sphinxcontrib-devhelp = "*"
@@ -768,9 +721,14 @@ sphinxcontrib-jsmath = "*"
 sphinxcontrib-qthelp = "*"
 sphinxcontrib-serializinghtml = "*"
 
+[package.extras]
+docs = ["sphinxcontrib-websupport"]
+lint = ["flake8 (>=3.5.0)", "flake8-import-order", "mypy (>=0.780)", "docutils-stubs"]
+test = ["pytest", "pytest-cov", "html5lib", "typed-ast", "cython"]
+
 [[package]]
 name = "sphinx-jsonschema"
-version = "1.16.3"
+version = "1.16.5"
 description = "Sphinx extension to display JSON Schema"
 category = "main"
 optional = true
@@ -790,11 +748,11 @@ category = "main"
 optional = true
 python-versions = "*"
 
-[package.extras]
-dev = ["transifex-client", "sphinxcontrib-httpdomain", "bump2version"]
-
 [package.dependencies]
 sphinx = "*"
+
+[package.extras]
+dev = ["transifex-client", "sphinxcontrib-httpdomain", "bump2version"]
 
 [[package]]
 name = "sphinxcontrib-applehelp"
@@ -911,25 +869,18 @@ description = "Virtual Python Environment builder"
 category = "dev"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
-marker = "python_version >= \"3.6.1\" and python_version < \"4.0.0\""
-
-[package.extras]
-docs = ["proselint (>=0.10.2)", "sphinx (>=3)", "sphinx-argparse (>=0.2.5)", "sphinx-rtd-theme (>=0.4.3)", "towncrier (>=19.9.0rc1)"]
-testing = ["coverage (>=5)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", "pytest (>=4)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.1)", "pytest-mock (>=2)", "pytest-randomly (>=1)", "pytest-timeout (>=1)", "pytest-xdist (>=1.31.0)", "packaging (>=20.0)", "xonsh (>=0.9.16)"]
 
 [package.dependencies]
 appdirs = ">=1.4.3,<2"
 distlib = ">=0.3.1,<1"
 filelock = ">=3.0.0,<4"
+importlib-metadata = {version = ">=0.12,<2", markers = "python_version < \"3.8\""}
+importlib-resources = {version = ">=1.0", markers = "python_version < \"3.7\""}
 six = ">=1.9.0,<2"
 
-[package.dependencies.importlib-metadata]
-version = ">=0.12,<2"
-python = "<3.8"
-
-[package.dependencies.importlib-resources]
-version = ">=1.0"
-python = "<3.7"
+[package.extras]
+docs = ["proselint (>=0.10.2)", "sphinx (>=3)", "sphinx-argparse (>=0.2.5)", "sphinx-rtd-theme (>=0.4.3)", "towncrier (>=19.9.0rc1)"]
+testing = ["coverage (>=5)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", "pytest (>=4)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.1)", "pytest-mock (>=2)", "pytest-randomly (>=1)", "pytest-timeout (>=1)", "pytest-xdist (>=1.31.0)", "packaging (>=20.0)", "xonsh (>=0.9.16)"]
 
 [[package]]
 name = "websocket-client"
@@ -949,7 +900,6 @@ description = "Backport of pathlib-compatible object wrapper for zip files"
 category = "main"
 optional = false
 python-versions = ">=3.6"
-marker = "python_version >= \"3.6.1\" and python_version < \"3.7\" or python_version >= \"3.6.1\" and python_version < \"3.8\" or python_version < \"3.8\""
 
 [package.extras]
 docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
@@ -959,7 +909,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 docs = ["sphinx", "sphinx_rtd_theme", "sphinx-jsonschema"]
 
 [metadata]
-lock-version = "1.0"
+lock-version = "1.1"
 python-versions = "^3.6"
 content-hash = "1d536b20bbea786ea1a060a8ceb135db5cca611c0add2b286fefb8d967216aae"
 
@@ -985,7 +935,6 @@ babel = [
     {file = "Babel-2.8.0.tar.gz", hash = "sha256:1aac2ae2d0d8ea368fa90906567f5c08463d98ade155c0c4bfedd6a0f7160e38"},
 ]
 black = [
-    {file = "black-20.8b1-py3-none-any.whl", hash = "sha256:70b62ef1527c950db59062cda342ea224d772abdf6adc58b86a45421bab20a6b"},
     {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
 ]
 cachetools = [
@@ -1360,7 +1309,7 @@ sphinx = [
     {file = "Sphinx-3.2.1.tar.gz", hash = "sha256:321d6d9b16fa381a5306e5a0b76cd48ffbc588e6340059a729c6fdd66087e0e8"},
 ]
 sphinx-jsonschema = [
-    {file = "sphinx-jsonschema-1.16.3.tar.gz", hash = "sha256:d6b55d45dc4f9d3791fdad75e9bd44970fcda4d6a641beceecfeb05c8b0f931e"},
+    {file = "sphinx-jsonschema-1.16.5.tar.gz", hash = "sha256:9e3dc895a0740fa7cf3726274e713f04b79e605514e4d34017b38ef095a487ef"},
 ]
 sphinx-rtd-theme = [
     {file = "sphinx_rtd_theme-0.5.0-py2.py3-none-any.whl", hash = "sha256:373413d0f82425aaa28fb288009bf0d0964711d347763af2f1b65cafcb028c82"},
