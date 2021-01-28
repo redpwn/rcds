@@ -33,7 +33,7 @@ sphinx_rtd_theme = { version = "^0.5.0", optional = true }
 sphinx-jsonschema = { version = "^1.15", optional = true }
 
 [tool.poetry.dev-dependencies]
-pre-commit = { version = "^2.9.3", python = "^3.6.1" }
+pre-commit = { version = "^2.10.0", python = "^3.6.1" }
 black = "^20.8b1"
 pytest = "^6.2.2"
 coverage = "^5.4"
