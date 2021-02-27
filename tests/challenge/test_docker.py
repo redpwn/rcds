@@ -26,7 +26,7 @@ class TestGetContextFiles:
         df_root = datadir / "contexts" / "dockerignore"
         assert df_root.is_dir()
         got = {str(p.relative_to(df_root)) for p in docker.get_context_files(df_root)}
-        assert got == {"Dockerfile", ".dockerignore", ".file", "file"}
+        assert got == {"Dockerfile", ".file", "file"}
 
     def test_complex_dockerignore(self, datadir: Path) -> None:
         df_root = datadir / "contexts" / "complex_dockerignore"
