@@ -200,7 +200,7 @@ class _AuthCfgCache:
             header = docker.auth.get_config_header(api_client, registry)
             if header is not None:
                 auth_config = json.loads(
-                    base64.urlsafe_b64decode(header), encoding="ascii"
+                    base64.urlsafe_b64decode(header).decode("ascii")
                 )
             else:
                 auth_config = None
