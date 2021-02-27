@@ -140,9 +140,10 @@ class AssetManagerTransaction:
             if not contents.is_file():
                 raise ValueError(f"Provided file does not exist: '{str(contents)}'")
             fpath.symlink_to(contents)
-        if isinstance(contents, ByteString):
-            contents = io.BytesIO(contents)
-        if isinstance(contents, io.IOBase):
+        else:
+            if isinstance(contents, ByteString):
+                contents = io.BytesIO(contents)
+            assert isinstance(contents, io.IOBase)
             with fpath.open("wb") as ofd:
                 shutil.copyfileobj(contents, ofd)
         os.utime(fpath, (fentry.mtime, fentry.mtime))
