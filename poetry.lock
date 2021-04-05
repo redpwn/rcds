@@ -724,7 +724,7 @@ test = ["pytest", "pytest-cov", "html5lib", "typed-ast", "cython"]
 
 [[package]]
 name = "sphinx-jsonschema"
-version = "1.16.7"
+version = "1.16.8"
 description = "Sphinx extension to display JSON Schema"
 category = "main"
 optional = true
@@ -1386,7 +1386,7 @@ sphinx = [
     {file = "Sphinx-3.3.1.tar.gz", hash = "sha256:1e8d592225447104d1172be415bc2972bd1357e3e12fdc76edf2261105db4300"},
 ]
 sphinx-jsonschema = [
-    {file = "sphinx-jsonschema-1.16.7.tar.gz", hash = "sha256:3e3dd1aafd3384c6dbd193bf690004605b55205c4b0491d38fdb014765864a92"},
+    {file = "sphinx-jsonschema-1.16.8.tar.gz", hash = "sha256:5728b3ece1fe475c285d5ae16953242c51b4e6852f48f0bb734cd8408f3ac8b3"},
 ]
 sphinx-rtd-theme = [
     {file = "sphinx_rtd_theme-0.5.1-py2.py3-none-any.whl", hash = "sha256:fa6bebd5ab9a73da8e102509a86f3fcc36dec04a0b52ea80e5a033b2aba00113"},
