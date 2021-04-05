@@ -79,7 +79,7 @@ the ``docker`` image; you can use ``python`` or any other image with a working
 
         deploy:
           when: manual
-          enviornment:
+          environment:
             name: production
           script:
             - rcds deploy
