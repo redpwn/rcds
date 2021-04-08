@@ -58,7 +58,10 @@ def get_context_files(root: Path) -> Iterator[Path]:
                     for line in fd
                 ),
             )
-        files = filter(lambda p: not spec.match_file(p.relative_to(root)), files)
+        files = filter(
+            lambda p: not spec.match_file(p.relative_to(root)) and p != dockerignore,
+            files,
+        )
     return filter(lambda p: p.is_file(), files)
 
 
