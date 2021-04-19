@@ -461,7 +461,7 @@ dev = ["pre-commit", "tox"]
 
 [[package]]
 name = "pre-commit"
-version = "2.11.1"
+version = "2.12.1"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 category = "dev"
 optional = false
@@ -907,7 +907,7 @@ docs = ["sphinx", "sphinx_rtd_theme", "sphinx-jsonschema"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "e05422e7efb75241c65ff343992ee7ba4ff1ea1eac7a10d897f3afcac4844477"
+content-hash = "512480e29a4be88ea52c2e08b1d67dba3ae2f1f5553fc3a12d4d65efb364335a"
 
 [metadata.files]
 alabaster = [
@@ -1194,8 +1194,8 @@ pluggy = [
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
 ]
 pre-commit = [
-    {file = "pre_commit-2.11.1-py2.py3-none-any.whl", hash = "sha256:94c82f1bf5899d56edb1d926732f4e75a7df29a0c8c092559c77420c9d62428b"},
-    {file = "pre_commit-2.11.1.tar.gz", hash = "sha256:de55c5c72ce80d79106e48beb1b54104d16495ce7f95b0c7b13d4784193a00af"},
+    {file = "pre_commit-2.12.1-py2.py3-none-any.whl", hash = "sha256:70c5ec1f30406250b706eda35e868b87e3e4ba099af8787e3e8b4b01e84f4712"},
+    {file = "pre_commit-2.12.1.tar.gz", hash = "sha256:900d3c7e1bf4cf0374bb2893c24c23304952181405b4d88c9c40b72bda1bb8a9"},
 ]
 py = [
     {file = "py-1.9.0-py2.py3-none-any.whl", hash = "sha256:366389d1db726cd2fcfc79732e75410e5fe4d31db13692115529d34069a043c2"},
