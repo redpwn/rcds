@@ -28,7 +28,7 @@ requests-toolbelt = "^0.9.1"
 click = "^7.1.2"
 
 # Docs build dependencies
-sphinx = { version = "^3.3.0", optional = true }
+sphinx = { version = ">=3.3,<5.0", optional = true }
 sphinx_rtd_theme = { version = "^0.5.0", optional = true }
 sphinx-jsonschema = { version = "^1.15", optional = true }
 
