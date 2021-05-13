@@ -344,7 +344,7 @@ format_nongpl = ["idna", "jsonpointer (>1.13)", "webcolors", "rfc3986-validator 
 
 [[package]]
 name = "kubernetes"
-version = "12.0.1"
+version = "17.17.0"
 description = "Kubernetes python client"
 category = "main"
 optional = false
@@ -907,7 +907,7 @@ docs = ["sphinx", "sphinx_rtd_theme", "sphinx-jsonschema"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "512480e29a4be88ea52c2e08b1d67dba3ae2f1f5553fc3a12d4d65efb364335a"
+content-hash = "323957dc108a06ab5fe82538e81fa34922bfd46ac54a8bf10785198840532c8e"
 
 [metadata.files]
 alabaster = [
@@ -1084,8 +1084,8 @@ jsonschema = [
     {file = "jsonschema-3.2.0.tar.gz", hash = "sha256:c8a85b28d377cc7737e46e2d9f2b4f44ee3c0e1deac6bf46ddefc7187d30797a"},
 ]
 kubernetes = [
-    {file = "kubernetes-12.0.1-py2.py3-none-any.whl", hash = "sha256:23c85d8571df8f56e773f1a413bc081537536dc47e2b5e8dc2e6262edb2c57ca"},
-    {file = "kubernetes-12.0.1.tar.gz", hash = "sha256:ec52ea01d52e2ec3da255992f7e859f3a76f2bdb51cf65ba8cd71dfc309d8daa"},
+    {file = "kubernetes-17.17.0-py3-none-any.whl", hash = "sha256:225a95a0aadbd5b645ab389d941a7980db8cdad2a776fde64d1b43fc3299bde9"},
+    {file = "kubernetes-17.17.0.tar.gz", hash = "sha256:c69b318696ba797dcf63eb928a8d4370c52319f4140023c502d7dfdf2080eb79"},
 ]
 markupsafe = [
     {file = "MarkupSafe-1.1.1-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:09027a7803a62ca78792ad89403b1b7a73a01c8cb65909cd876f7fcebd79b161"},
