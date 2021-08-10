@@ -15,13 +15,25 @@ spec:
       {{ helpers.container_labels() | indent(6) }}
   template:
     metadata:
+      {% if container.config.k8s and container.config.k8s.metadata %}
+      {{ container.config.k8s.metadata | omit(["labels"]) | yaml(6) }}
+      {% endif %}
       labels:
         {{ helpers.common_labels() | indent(8) }}
         {{ helpers.container_labels() | indent(8) }}
+        {% if container.config.k8s and container.config.k8s.metadata and container.config.k8s.metadata.labels %}
+        {{ container.config.k8s.metadata.labels | yaml(8) }}
+        {% endif %}
     spec:
+      {% if container.config.k8s and container.config.k8s.spec %}
+      {{ container.config.k8s.spec | yaml(6) }}
+      {% endif %}
       containers:
         - name: {{ container.name }}
           image: {{ container.config.image }}
+          {% if container.config.k8s and container.config.k8s.container %}
+          {{ container.config.k8s.container | yaml(10) }}
+          {% endif %}
           {% if container.config.ports %}
           ports:
           {% for port in container.config.ports %}
