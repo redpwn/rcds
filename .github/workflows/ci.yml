@@ -9,16 +9,13 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        python-version: [3.9]
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v1
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
 
       - name: Install dependencies
         run: |
@@ -67,16 +64,13 @@ jobs:
     needs:
       - lint
       - test
-    strategy:
-      matrix:
-        python-version: [3.9]  # must be a single version
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v1
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
 
       - name: Install dependencies
         run: |
