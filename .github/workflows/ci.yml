@@ -2,6 +2,8 @@ name: CI
 on:
   push:
     branches: [master]
+    tags:
+      - v*
   pull_request:
 
 jobs:
@@ -58,3 +60,40 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           codecov --token="$CODECOV_TOKEN"
+
+  publish:
+    runs-on: ubuntu-20.04
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - lint
+      - test
+    strategy:
+      matrix:
+        python-version: [3.9]  # must be a single version
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade poetry
+          poetry --version
+
+      - name: Check tag is correct
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          [ $(poetry version -s) = ${REF##refs/tags/v} ]
+
+      - name: Build artifacts
+        run: poetry build
+
+      - name: Publish
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+        run: poetry publish
