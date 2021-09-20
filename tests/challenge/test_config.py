@@ -110,15 +110,11 @@ def test_nonexistent_flag_file(configloader, test_datadir) -> None:
 
 
 def test_warn_multiline_flag(configloader, test_datadir) -> None:
-    with pytest.warns(RuntimeWarning) as record:
+    with pytest.warns(
+        RuntimeWarning, match=r"^Flag contains multiple lines; is this intended\?$"
+    ):
         cfg, errors = configloader.check_config(test_datadir / "challenge.yml")
     assert errors is None
-    assert len(record) == 1
-    assert isinstance(record[0].message, Warning)
-    assert (
-        str(record[0].message.args[0])
-        == "Flag contains multiple lines; is this intended?"
-    )
 
 
 def test_default_category(configloader, test_datadir) -> None:

@@ -303,11 +303,8 @@ class TestCacheErrorRecovery:
         file1 = ctx._root / "files" / "file1"
         with file1.open("w") as fd:
             fd.write("abcd")
-        with pytest.warns(RuntimeWarning) as record:
+        with pytest.warns(RuntimeWarning, match=r"^Unexpected item found in cache: "):
             ctx.sync(check=True)
-        assert len(record) == 1
-        assert isinstance(record[0].message, Warning)
-        assert "Unexpected item found in cache: " in str(record[0].message.args[0])
         assert not file1.exists()
 
     def test_extra_dir(self, datadir: Path, am_fn: assets.AssetManager) -> None:
@@ -315,11 +312,8 @@ class TestCacheErrorRecovery:
         ctx = asset_manager.create_context("challenge")
         dir1 = ctx._root / "files" / "dir1"
         dir1.mkdir()
-        with pytest.warns(RuntimeWarning) as record:
+        with pytest.warns(RuntimeWarning, match=r"^Unexpected item found in cache: "):
             ctx.sync(check=True)
-        assert len(record) == 1
-        assert isinstance(record[0].message, Warning)
-        assert "Unexpected item found in cache: " in str(record[0].message.args[0])
         assert not dir1.exists()
 
     def test_broken_link(self, datadir: Path, am_fn: assets.AssetManager) -> None:
