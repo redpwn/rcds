@@ -79,10 +79,8 @@ jobs:
           poetry --version
 
       - name: Check tag is correct
-        env:
-          REF: ${{ github.ref }}
         run: |
-          [ $(poetry version -s) = ${REF##refs/tags/v} ]
+          [ $(poetry version -s) = ${GITHUB_REF##refs/tags/v} ]
 
       - name: Build artifacts
         run: poetry build
