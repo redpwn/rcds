@@ -50,9 +50,9 @@ challenge does not exist.
 Deployment
 ----------
 
-In rCDS, you define first define all of the :ref:`containers
-<challenge#containers>` that your challenge needs to run, and then declare how
-you want them :ref:`exposed <challenge#expose>` to the world.
+In rCDS, you first define all of the :ref:`containers <challenge#containers>`
+that your challenge needs to run, and then declare how you want them
+:ref:`exposed <challenge#expose>` to the world.
 
 ``deployed`` --- whether or not this challenge's containers should be deployed.
 Defaults to ``true``.
