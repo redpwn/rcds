@@ -91,17 +91,54 @@ properties:
           Path to the file to provide
       - type: object
         properties:
-          file:
-            type: string
-            description: >-
-              Path to the file to provide
+          kind:
+            const: file
+          spec:
+            type: object
+            properties:
+              file:
+                type: string
+                description: >-
+                  Path to the file to provide
           as:
             type: string
             description: >-
               Name of file as shown to competitors
         required:
-        - file
-        - as
+          - kind
+          - spec
+          - as
+      - type: object
+        properties:
+          kind:
+            const: zip
+          spec:
+            type: object
+            properties:
+              files:
+                type: array
+                description: >-
+                  Files to provide in archive
+                items:
+                  type: string
+                  description: >-
+                    Glob of file(s) to provide
+              exclude:
+                type: array
+                description: >-
+                  Pathspecs to exclude from archive
+                items:
+                  type: string
+            required:
+              - files
+          as:
+            type: string
+            description: >-
+              Name of file as shown to competitors
+        required:
+          - kind
+          - spec
+          - as
 
   # Runtime (containers)
   deployed:

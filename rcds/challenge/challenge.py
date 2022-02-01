@@ -1,6 +1,11 @@
 import re
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, cast
+import os
+import tempfile
+import zipfile
+from typing import TYPE_CHECKING, Any, Callable, Dict, cast
+
+import pathspec
 
 from ..util import SUPPORTED_EXTENSIONS, deep_merge, find_files
 from .config import ConfigLoader
@@ -60,7 +65,7 @@ class Challenge:
     config: Dict[str, Any]
     context: Dict[str, Any]  # overrides to Jinja context
     _asset_manager_context: "AssetManagerContext"
-    _asset_sources: List[Callable[["AssetManagerTransaction"], None]]
+    _asset_sources: Dict[str, Callable[[Dict[str, Any]], Path]]
 
     def __init__(self, project: "Project", root: Path, config: dict):
         self.project = project
@@ -70,37 +75,74 @@ class Challenge:
         self._asset_manager_context = self.project.asset_manager.create_context(
             self.config["id"]
         )
-        self._asset_sources = []
+        self._asset_sources = {}
 
-        self.register_asset_source(self._add_static_assets)
+        self.register_asset_source("file", self._add_file_asset)
+        self.register_asset_source("zip", self._add_zip_asset)
 
-    def _add_static_assets(self, transaction: "AssetManagerTransaction") -> None:
-        if "provide" not in self.config:
-            return
-        for provide in self.config["provide"]:
-            if isinstance(provide, str):
-                path = self.root / Path(provide)
-                name = path.name
-            else:
-                path = self.root / Path(provide["file"])
-                name = provide["as"]
-            transaction.add_file(name, path)
+    # def _add_static_assets(self, transaction: "AssetManagerTransaction") -> None:
+    #     if "provide" not in self.config:
+    #         return
+    #     for provide in self.config["provide"]:
+    #         if isinstance(provide, str):
+    #             path = self.root / Path(provide)
+    #             name = path.name
+    #         else:
+    #             path = self.root / Path(provide["file"])
+    #             name = provide["as"]
+    #         transaction.add_file(name, path)
+
+    def _add_file_asset(self, spec: Dict[str, Any]) -> Path:
+        path = self.root / Path(spec["file"])
+        return path
+
+    def _add_zip_asset(self, spec: Dict[str, Any]) -> Path:
+        exclude: pathspec.PathSpec = None
+        if "exclude" in spec:
+            exclude = pathspec.PathSpec.from_lines("gitwildmatch", spec["exclude"])
+        fd, fn = tempfile.mkstemp(suffix=".zip")
+        os.close(fd)
+        with zipfile.ZipFile(fn, 'w') as zf:
+            def add(path: Path):
+                if exclude is not None and exclude.match_file(path.relative_to(self.root)):
+                    return
+                if path.is_file():
+                    print(path, path.relative_to(self.root))
+                    zf.write(path, path.relative_to(self.root), zipfile.ZIP_DEFLATED)
+                elif path.is_dir():
+                    zf.write(path, path.relative_to(self.root), zipfile.ZIP_STORED)
+                    for nm in path.iterdir():
+                        add(nm)
+
+            for glob in spec["files"]:
+                for path in self.root.glob(glob):
+                    add(path)
+
+        return Path(fn)
 
     def register_asset_source(
-        self, do_add: Callable[["AssetManagerTransaction"], None]
+        self, kind: str, do_add: Callable[["AssetManagerTransaction"], None]
     ) -> None:
         """
         Register a function to add assets to the transaction for this challenge.
         """
-        self._asset_sources.append(do_add)
+        self._asset_sources[kind] = do_add
 
     def create_transaction(self) -> "AssetManagerTransaction":
         """
         Get a transaction to update this challenge's assets
         """
         transaction = self._asset_manager_context.transaction()
-        for do_add in self._asset_sources:
-            do_add(transaction)
+        if "provide" not in self.config:
+            return transaction
+        for provide in self.config["provide"]:
+            if isinstance(provide, str):
+                path = self.root / Path(provide)
+                name = path.name
+            else:
+                path = self._asset_sources[provide["kind"]](provide["spec"])
+                name = provide["as"]
+            transaction.add_file(name, path)
         return transaction
 
     def get_asset_manager_context(self) -> "AssetManagerContext":
