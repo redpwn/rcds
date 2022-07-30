@@ -11,7 +11,7 @@ MANIFEST_KINDS = ["Deployment", "Service", "Ingress", "NetworkPolicy"]
 KIND_TO_API_VERISON = {
     "Deployment": "apps/v1",
     "Service": "v1",
-    "Ingress": "networking.k8s.io/v1beta1",
+    "Ingress": "networking.k8s.io/v1",
     "NetworkPolicy": "networking.k8s.io/v1",
 }
 
