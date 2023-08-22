@@ -63,11 +63,11 @@ Additionally, create a ``.env`` file. It should look like the following:
     RCDS_RCTF_URL=https://ctf.example.com
     RCDS_RCTF_TOKEN=999omGulJ8OUxy+NNMmfV4VbErhHf5HTxRU07FKFdDYQmEGworLsxl2G6Hdl6BgrkYvhfAZoR0IEdE0XXlurGB1szIjdIk1whr3iSP2ZIdAC7chSDlk9SL/iN68J
 
-You can obtain the token by creating an admin account (`Instructions here <https://rctf.redpwn.net/management/admin/>`_), copying the token from the admin page, and then url decoding it.
+You can obtain the token by creating an admin account (`Instructions here <https://rctf.redpwn.net/management/admin/>`_). Once you have created the admin account, click on the profile page, and grab the token from the "Copy Link" button on the top right. Make sure to URL decode the token before putting it in the ``.env`` file.
 
-From google cloud, create a standard kubernetes cluster. Make sure that it is NOT an autopilot cluster, which google cloud will try to default to. If doing this through the UI, there should be an option on the top right to switch to a standard cluster.
+From google cloud, create a standard kubernetes cluster. Make sure that it is NOT an autopilot cluster, which google cloud will try to default to. Autopilot clusters in google cloud have limited permissions, and you will almost certainly need more permissions, so selecting the standard cluster is a must. If doing this through the UI, there should be an option on the top right to switch to a standard cluster.
 
-Enable Dataplane V2 if it is not already enabled by default. Additionally, under the network settings tab, create a new tag called ``open-nodeports``. We will be using this later to configure the firewall.
+Enable Dataplane V2 by clicking the "Dataplane V2" checkbox under clusters -> networking if it is not already enabled by default. Additionally, under the network settings tab, create a new tag called ``open-nodeports``. We will be using this later to configure the firewall.
 
 Once the kubernetes cluster is created, click the connect button on the top bar of the cluster page and connect to the cluster using the command provided. This will set up your local kubectl configuration to connect to the cluster.
 
@@ -75,7 +75,13 @@ Additionally, we will need to create a container registry to store our docker im
 
 Once the registry is created, we will need to configure docker to be able to push to this registry. To do this, right click on the registry, and click setup instructions on google cloud. This will give you a command to run to configure docker to push to this registry. Run this command on your local machine.
 
-Make sure to configure your ``rcds.yaml`` file to match the name of your container registry.
+Make sure to configure your ``rcds.yaml`` file to match the name of your container registry you created. Your docker image prefix should look something like this: ``us-central1-docker.pkg.dev/amateursctf/ctf-docker-test``. Typically it will be in the format ``REGION-NAME-docker.pkg.dev/PROJECT-NAME/REPOSITORY-NAME``. You can find it by clicking on your project from the Artifact Registry page, and clicking on the copy icon from the top left hand side of the page.
+
+.. code-block:: yaml
+
+    docker:
+        image:
+            prefix: us-central1-docker.pkg.dev/amateursctf/ctf-docker-test
 
 Once that's done, go to the VPC Network tab of google cloud, and assign a static IP address to one of the nodes in your cluster. This will be the IP address that your challenges will be hosted on, so configure DNS to point to this IP address.
 
@@ -143,7 +149,7 @@ Finally, we're going to configure the automatic TLS certificate generation. To d
     defaultCertificate:
         secretName: wildcard-domain
 
-You'll need to create a cloudflare API key with permissions to Edit zone DNS. Once you've replaced all the values inside ``certs.yml`` (email, domain, api token), run the following command to create the resources:
+You'll need to create a cloudflare API key with permissions to Edit zone DNS. For more information on how to create an API key, check out the `Cloudflare documentation <https://developers.cloudflare.com/fundamentals/api/get-started/create-token/>`_.Once you've replaced all the values inside ``certs.yml`` (email, domain, api token), run the following command to create the resources:
 
 .. code-block:: bash
 
