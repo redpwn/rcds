@@ -101,6 +101,12 @@ the ``docker`` image; you can use ``python`` or any other image with a working
 
 .. toctree::
     :maxdepth: 1
+    :caption: Quickstart Guide
+
+    quickstart
+
+.. toctree::
+    :maxdepth: 1
     :caption: Contents
 
     project
