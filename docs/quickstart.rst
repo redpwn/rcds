@@ -65,13 +65,13 @@ Additionally, create a ``.env`` file. It should look like the following:
 
 You can obtain the token by creating an admin account (`Instructions here <https://rctf.redpwn.net/management/admin/>`_). Once you have created the admin account, click on the profile page, and grab the token from the "Copy Link" button on the top right. Make sure to URL decode the token before putting it in the ``.env`` file.
 
-From google cloud, create a standard kubernetes cluster. Make sure that it is NOT an autopilot cluster, which google cloud will try to default to. Autopilot clusters in google cloud have limited permissions, and you will almost certainly need more permissions, so selecting the standard cluster is a must. If doing this through the UI, there should be an option on the top right to switch to a standard cluster.
+From google cloud, create a standard kubernetes cluster. Make sure that it is NOT an autopilot cluster, which google cloud will try to default to. Autopilot clusters in google cloud have limited permissions, and you will almost certainly need more permissions, so selecting the standard cluster is a must. If doing this through the UI, there should be an option on the top right to switch to a standard cluster. Additionally, while creating the cluster, set the boot disk size of each individual node (Node Pools -> default-pool -> node) to 50gb instead of 100gb. 
 
-Enable Dataplane V2 by clicking the "Dataplane V2" checkbox under clusters -> networking if it is not already enabled by default. Additionally, under the network settings tab, create a new tag called ``open-nodeports``. We will be using this later to configure the firewall.
+Enable Dataplane V2 by clicking the "Dataplane V2" checkbox under clusters -> networking if it is not already enabled by default. Additionally, under the network settings tab (Node Pools -> default-pool -> Networking), create a new tag called ``open-nodeports``. We will be using this later to configure the firewall.
 
 Once the kubernetes cluster is created, click the connect button on the top bar of the cluster page and connect to the cluster using the command provided. This will set up your local kubectl configuration to connect to the cluster.
 
-Additionally, we will need to create a container registry to store our docker images. To do this, go to the container registry page, and create a new registry. Make sure to select the same region as your kubernetes cluster.
+Additionally, we will need to create a container registry to store our docker images. To do this, go to the artifact registry (note that container is being deprecated, so we use artifact instead) page, and create a new registry. Make sure to select the same region as your kubernetes cluster.
 
 Once the registry is created, we will need to configure docker to be able to push to this registry. To do this, right click on the registry, and click setup instructions on google cloud. This will give you a command to run to configure docker to push to this registry. Run this command on your local machine.
 
@@ -85,7 +85,7 @@ Make sure to configure your ``rcds.yaml`` file to match the name of your contain
 
 Once that's done, go to the VPC Network tab of google cloud, and assign a static IP address to one of the nodes in your cluster. This will be the IP address that your challenges will be hosted on, so configure DNS to point to this IP address.
 
-Additionally, configure firewall rules in the VPC Network tab to allow traffic for the allow-nodeports rule that we created earlier.
+Additionally, configure firewall rules in the VPC Network tab to allow all traffic for the allow-nodeports rule that we created earlier. 
 
 Once done, install the following helm charts onto your cluster:
 
@@ -93,7 +93,7 @@ Once done, install the following helm charts onto your cluster:
 
 - **Cert-Manager**: For installing Cert-Manager, ensure that you install CRDs using the second option: `Install Cert-Manager with CRDs using Helm <https://cert-manager.io/docs/installation/helm/#3-install-customresourcedefinitions>`_
 
-Once done, go to the VPC Network IP addresses tab, and convert the traefik IP address to a static IP address. This will be the IP address that your web challenges will be hosted on, so add a wildcard DNS entry to point to this IP address. For example, add an A record pointing at  ``*.example.com``.
+Once done, go to the VPC Network IP addresses tab, and convert the traefik IP address to a static IP address. It should be marked there as traefik, and if not can be found by using kubectl. This will be the IP address that your web challenges will be hosted on, so add a wildcard DNS entry to point to this IP address. For example, add an A record pointing at  ``*.example.com``.
 
 Finally, we're going to configure the automatic TLS certificate generation. To do this, fill out the following template and name it ``certs.yml``:
 
@@ -116,13 +116,13 @@ Finally, we're going to configure the automatic TLS certificate generation. To d
         email: "EMAIL@GOES-HERE"
         server: https://acme-v02.api.letsencrypt.org/directory
         privateKeySecretRef:
-        name: letsencrypt-issuer-key
+            name: letsencrypt-issuer-key
         solvers:
-        - dns01:
-            cloudflare:
-                apiTokenSecretRef:
-                name: cloudflare-token
-                key: api-token
+            - dns01:
+                cloudflare:
+                    apiTokenSecretRef:
+                    name: cloudflare-token
+                    key: api-token
     ---
     apiVersion: cert-manager.io/v1
     kind: Certificate
